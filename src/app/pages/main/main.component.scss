@@ -1,0 +1,133 @@
+body {
+    font-family: 'Roboto', 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    border-radius: 12px;
+}
+
+h1, h2 {
+    color: #6a0dad;
+    text-align: center;
+    font-weight: 300;
+    margin-bottom: 25px;
+}
+
+h1 {
+    font-size: 2.5em;
+    letter-spacing: 1px;
+}
+
+h2 {
+    font-size: 1.8em;
+}
+
+label {
+    font-weight: 500;
+    display: block;
+    margin: 15px 0 8px;
+    color: #444;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+input[type="time"],
+input[type="number"],
+input[type="text"],
+button {
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    width: 100%;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+input[type="time"]:focus,
+input[type="number"]:focus,
+input[type="text"]:focus {
+    outline: none;
+    border-color: #6a0dad;
+    box-shadow: 0 0 8px rgba(106, 13, 173, 0.2);
+}
+
+button {
+    background-color: #6a0dad;
+    color: white;
+    cursor: pointer;
+    border: none;
+    width: auto;
+    margin-top: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+button:hover {
+    background-color: #9b30c9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.espacio {
+    border: 2px solid #e0e0e0;
+    margin: 8px;
+    padding: 15px;
+    width: 130px;
+    height: 70px;
+    text-align: center;
+    background-color: #28a745;
+    border-radius: 10px;
+    transition: all 0.4s ease;
+    position: relative;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.espacio.ocupado {
+    background-color: #ff4d4d;
+    transform: scale(1.05);
+}
+
+.info-config {
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    margin: 25px 0;
+    text-align: center;
+}
+
+.info-config p {
+    margin: 10px 0;
+    font-size: 18px;
+    color: #555;
+}
+
+.info-config span {
+    color: #6a0dad;
+    font-weight: 600;
+}
+
+#parqueadero {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+}

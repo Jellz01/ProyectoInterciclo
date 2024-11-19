@@ -1,0 +1,27 @@
+<h2>Configurar Parqueadero y Tarifas</h2>
+
+<!-- Configuración del parqueadero -->
+<label for="horaApertura">Horario de apertura:</label>
+<input #horaAperturaInput type="time" id="horaApertura" value="08:00">
+
+<label for="horaCierre">Horario de cierre:</label>
+<input #horaCierreInput type="time" id="horaCierre" value="20:00">
+
+<label for="numeroParqueos">Número de parqueos:</label>
+<input #numeroParqueosInput type="number" id="numeroParqueos" value="10" min="1" max="100">
+
+<!-- Definición de tarifas -->
+<label for="tarifaHora">Tarifa por hora:</label>
+<input #tarifaHoraInput type="number" id="tarifaHora" value="0.25" min="0">
+
+<label for="tarifaDia">Tarifa por día:</label>
+<input #tarifaDiaInput type="number" id="tarifaDia" value="1.50" min="0">
+
+<label for="tarifaMes">Tarifa por mes:</label>
+<input #tarifaMesInput type="number" id="tarifaMes" value="35" min="0">
+
+<!-- Botón único -->
+<button (click)="configurarYDefinir()">Guardar Configuración y Tarifas</button>
+
+<!-- Container for parking spaces -->
+<div #parqueadero class="parqueadero"></div>

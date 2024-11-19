@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parqueadero</title>
+</head>
+<body>
+    <div class="container">
+        <button (click)="guardarEmail()">
+            <i class="fas fa-cog"></i> Settings
+        </button>
+
+        <button (click)="listarUsuarios()">
+            <i class="fas fa-users"></i> Listar Usuarios
+        </button>
+        <button (click)="listarContratos()">
+            <i class="fas fa-users"></i> Listar Contratos
+        </button>
+        <button (click)="gestionarContrato()">Registrar Contrato</button> <!-- Botón añadido -->
+        <button (click)="gestionarParqueadero()">Configuracion Parqueadero</button> <!-- Botón añadido -->
+
+        <h1>Parqueadero</h1>
+
+        <div class="tarifa-info">
+            <h2>Tarifas Definidas:</h2>
+            <p>Tarifa por hora: <span id="infoTarifaHora"></span></p>
+            <p>Tarifa por día: <span id="infoTarifaDia"></span></p>
+            <p>Tarifa por mes: <span id="infoTarifaMes"></span></p>
+        </div>
+
+        <div class="info-config">
+            <h2>Información Configuración:</h2>
+            <p>Horario de apertura: <span id="horarioApertura"></span></p>
+            <p>Horario de cierre: <span id="horarioCierre"></span></p>
+            <p>Número de parqueos: <span id="numeroParqueosInfo"></span></p>
+        </div>
+
+      
+        <h2>Ingreso de Placa de Vehículo</h2>
+        <input type="text" id="placaIngreso" placeholder="Ingrese la placa (max 7 caracteres)" maxlength="7" />
+        <button (click)="ocuparEspacio()">Ocupar Espacio</button>
+
+        <h2>Salida de Vehículo</h2>
+        <input type="text" id="placaSalida" placeholder="Ingrese la placa para salir" maxlength="7" />
+        <button (click)="salirEspacio()">Salir</button>
+
+      
+        <div>
+            <h3>Placas en el Parqueadero</h3>
+            <ul id="listaPlacasContenido">
+              <li *ngFor="let placa of placasEnParqueadero">
+                {{ placa }}
+              </li>
+            </ul>
+          </div>
+          
+
+        <div id="parqueadero"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

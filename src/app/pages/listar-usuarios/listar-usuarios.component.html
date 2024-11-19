@@ -1,0 +1,15 @@
+<div *ngIf="users.length === 0">No users available</div>
+<ul *ngIf="users.length > 0">
+  <li *ngFor="let user of users">
+    <strong>{{ user.name }}</strong>
+    <p>Email: {{ user.email }}</p>
+    <p>Nombre: {{ user.nombre }}</p>
+    <p>Apellido: {{ user.apellido }}</p>
+    <p>Cédula: {{ user.cedula }}</p>
+    
+    <!-- Botones de editar y borrar -->
+    <button class="edit" (click)="editUser(user.email)">Editar</button>
+    <button class="delete" (click)="deleteUser(user.email)">Borrar</button>
+  </li>
+</ul>
+

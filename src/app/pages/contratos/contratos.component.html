@@ -1,0 +1,23 @@
+<h2>Gestión de Contratos de Arriendo Mensual</h2>
+
+<form (ngSubmit)="registrarContrato()">
+  <label for="clienteNombre">Nombre del cliente:</label>
+  <select id="clienteNombre" [(ngModel)]="selectedCliente" name="clienteNombre" required>
+    <option value="">Seleccione un cliente</option>
+    <!-- Dynamically populate clientes -->
+    <option *ngFor="let cliente of clientes" [value]="cliente.id">
+      {{ cliente.nombre }}, {{ cliente.cedula }}
+    </option>
+  </select>
+
+  <label for="placaContrato">Placa del vehículo:</label>
+  <input type="text" id="placaContrato" placeholder="Ingrese la placa (max 7 caracteres)" maxlength="7" required>
+
+  <label for="inicioContrato">Fecha de inicio:</label>
+  <input type="date" id="inicioContrato" required>
+
+  <label for="finContrato">Fecha de fin:</label>
+  <input type="date" id="finContrato" required>
+
+  <button type="submit">Registrar contrato</button>
+</form>

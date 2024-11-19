@@ -1,0 +1,169 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+h1, h2 {
+    color: #6a0dad;
+    text-align: center;
+}
+
+h2 {
+    margin-top: 20px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin: 10px 0 5px;
+    color: #444;
+}
+
+input[type="time"],
+input[type="number"],
+input[type="text"],
+button {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+    font-size: 16px;
+}
+
+button {
+    background-color: #6a0dad;
+    color: white;
+    margin-left: 30px;
+    cursor: pointer;
+    border: none;
+    width: auto;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #9b30c9;
+}
+
+.espacio {
+    border: 1px solid #ddd;
+    margin: 5px;
+    padding: 10px;
+    display: inline-block;
+    width: 120px; /* Rectangular size */
+    height: 60px; /* Rectangular size */
+    text-align: center;
+    background-color: #28a745;  /* Green when not occupied */
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    color: white; /* Text color */
+}
+
+.espacio.ocupado {
+    background-color: #ff4d4d;  /* Red when occupied */
+}
+
+.car-animation {
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 20px;
+    background-color: #000;
+    border-radius: 5px;
+    animation: enter 1s forwards;
+}
+
+@keyframes enter {
+    from { top: -50px; opacity: 0; }
+    to { top: 50%; opacity: 1; }
+}
+
+.info-config {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    text-align: center;
+}
+
+.info-config p {
+    margin: 5px;
+    font-size: 18px;
+    color: #444;
+}
+
+.info-config span {
+    color: #6a0dad;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+}
+
+.plate-list {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    font-size: 16px;
+    color: #444;
+    display: none;
+}
+
+.plate-list h3 {
+    color: #6a0dad;
+    margin-bottom: 10px;
+}
+
+/* main.component.scss */
+
+/* Estilo para el contenedor del parqueadero */
+#parqueadero {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: center;
+}
+  
+/* Estilo para cada espacio */
+.espacio {
+    width: 120px; /* Rectangular size */
+    height: 60px; /* Rectangular size */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #28a745; /* Green when not occupied */
+    border: 2px solid #ddd;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 14px;
+}
+
+/* Estilo cuando el espacio está ocupado */
+.espacio.ocupado {
+    background-color: #ff4d4d; /* Red when occupied */
+    color: white;
+    font-weight: bold;
+}
+
+/* Efecto cuando se pasa el cursor sobre un espacio */
+.espacio:hover {
+    background-color: #e0e0e0;
+}
+
+

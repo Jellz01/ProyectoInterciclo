@@ -1,0 +1,14 @@
+<div *ngIf="contratos.length === 0">No contracts available</div>
+<ul *ngIf="contratos.length > 0">
+  <li *ngFor="let contrato of contratos">
+    <strong>{{ contrato.nombreCliente }}</strong>
+    <p>Fecha de inicio: {{ contrato.fechaInicio | date: 'shortDate' }}</p>
+    <p>Fecha final: {{ contrato.fechaFinal | date: 'shortDate' }}</p>
+    <p>Placa: {{ contrato.placa }}</p>
+   
+    
+    <!-- Botones de editar y borrar -->
+    <button class="edit" (click)="editContrato(contrato.email)">Editar</button>
+    <button class="delete" (click)="deleteContrato(contrato.email)">Borrar</button>
+  </li>
+</ul>
