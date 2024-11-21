@@ -142,19 +142,19 @@ checkUserProfile(user: any) {
         console.log("User found with profile:", userData);
         console.log("User email found : ",userEmail);
 
-        // Check if the role is "Administrativo" using bracket notation
+        
         if (userData['role'] === "administrador") {
           this.router.navigate(['pages/Main']);
         } else {
           this.router.navigate(['pages/editPerfilU']);
         }
 
-        // Set the email in the auth service and local storage
+        
         this.authService.setEmail(userEmail);
         console.log("email inicio: ", localStorage.getItem('userEmail'));
       });
     } else {
-      // No profile found or account does not have data
+      
       console.log("No profile found for this email.", userEmail);
       localStorage.setItem('LIemail',userEmail);
       this.router.navigate(['pages/Perfil']);

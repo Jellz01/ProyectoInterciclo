@@ -5,10 +5,8 @@
     <p>Fecha de inicio: {{ contrato.fechaInicio | date: 'shortDate' }}</p>
     <p>Fecha final: {{ contrato.fechaFinal | date: 'shortDate' }}</p>
     <p>Placa: {{ contrato.placa }}</p>
-   
     
-    <!-- Botones de editar y borrar -->
-    <button class="edit" (click)="editContrato(contrato.email)">Editar</button>
-    <button class="delete" (click)="deleteContrato(contrato.email)">Borrar</button>
+    <!-- Botón de borrar, pasando el id del contrato -->
+    <button class="delete" (click)="borrarContrato(contrato.id)">Borrar</button>
   </li>
 </ul>

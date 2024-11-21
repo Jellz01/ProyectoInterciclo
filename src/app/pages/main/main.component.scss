@@ -87,7 +87,7 @@ button:hover {
     width: 130px;
     height: 70px;
     text-align: center;
-    background-color: #28a745;
+    background-color: #28a745; /* Verde para espacio libre */
     border-radius: 10px;
     transition: all 0.4s ease;
     position: relative;
@@ -97,11 +97,13 @@ button:hover {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    font-weight: bold;
 }
 
 .espacio.ocupado {
-    background-color: #ff4d4d;
+    background-color: #ff4d4d; /* Rojo para espacio ocupado */
     transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .info-config {
@@ -131,3 +133,149 @@ button:hover {
     gap: 15px;
     margin-top: 30px;
 }
+
+
+/* Estilos generales para el parqueadero */
+#parqueadero {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    justify-content: center;
+  }
+  
+  /* Estilo base para cada espacio */
+  .espacio {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s ease;
+  }
+  
+  /* Estilo para los espacios libres (verdes) */
+  .espacio:not(.ocupado) {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+  }
+  
+  /* Estilo para los espacios ocupados (rojos) */
+  .espacio.ocupado {
+    background-color: #f44336; /* Rojo */
+    color: white;
+  }
+  
+  /* Efecto de hover sobre los espacios */
+  .espacio:hover {
+    transform: scale(1.05);
+    background-color: #388E3C; /* Cambia a un verde más oscuro */
+  }
+  
+  /* Animación de placa ingresada */
+  .car-animation {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    animation: moveCar 1s ease-in-out;
+  }
+  
+  /* Animación del movimiento de un coche */
+  @keyframes moveCar {
+    0% {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    50% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+  }
+  
+  /* Estilos generales para el parqueadero */
+#parqueadero {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    justify-content: center;
+  }
+  
+  /* Estilo base para cada espacio */
+  .espacio {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Estilo para los espacios libres (verdes) */
+  .espacio:not(.ocupado) {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+  }
+  
+  /* Estilo para los espacios ocupados (rojos) */
+  .espacio.ocupado {
+    background-color: #f44336; /* Rojo */
+    color: white;
+  }
+  
+  /* Estilo para la placa dentro de un espacio ocupado */
+  .placa {
+    font-size: 14px;
+    font-weight: bold;
+    color: #c91414;
+    text-align: center;
+  }
+  
+  /* Efecto de hover sobre los espacios */
+  .espacio:hover {
+    transform: scale(1.05);
+    background-color: #388E3C; /* Cambia a un verde más oscuro */
+  }
+  
+  /* Animación de placa ingresada */
+  .car-animation {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    animation: moveCar 1s ease-in-out;
+  }
+  
+  /* Animación del movimiento de un coche */
+  @keyframes moveCar {
+    0% {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    50% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+  }
+  

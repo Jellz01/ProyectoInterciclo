@@ -21,6 +21,7 @@ export class ConfParqueoComponent implements OnInit {
   horaCierre: string = '20:00';
   numeroParqueos: number = 10;
   tarifas: { hora: number; dia: number; mes: number } = { hora: 0, dia: 0, mes: 0 };
+  diasOperacion: string[] = []; // Array para almacenar los días seleccionados
 
   constructor(private router: Router) {}
 
@@ -38,31 +39,26 @@ export class ConfParqueoComponent implements OnInit {
         const configDoc = querySnapshot.docs[0];
         const configData = configDoc.data();
 
-        // Populate form inputs with fetched data
-        if (this.horaAperturaInput) {
-          this.horaAperturaInput.nativeElement.value = configData['horaApertura'] || '08:00';
-        }
-        if (this.horaCierreInput) {
-          this.horaCierreInput.nativeElement.value = configData['horaCierre'] || '20:00';
-        }
-        if (this.numeroParqueosInput) {
-          this.numeroParqueosInput.nativeElement.value = configData['numeroParqueos']?.toString() || '10';
-        }
-        if (this.tarifaHoraInput) {
-          this.tarifaHoraInput.nativeElement.value = configData['tarifas']?.hora?.toString() || '0';
-        }
-        if (this.tarifaDiaInput) {
-          this.tarifaDiaInput.nativeElement.value = configData['tarifas']?.dia?.toString() || '0';
-        }
-        if (this.tarifaMesInput) {
-          this.tarifaMesInput.nativeElement.value = configData['tarifas']?.mes?.toString() || '0';
-        }
-
-        // Update component properties
+        // Poblar los inputs con los datos recuperados
         this.horaApertura = configData['horaApertura'] || '08:00';
         this.horaCierre = configData['horaCierre'] || '20:00';
         this.numeroParqueos = configData['numeroParqueos'] || 10;
         this.tarifas = configData['tarifas'] || { hora: 0, dia: 0, mes: 0 };
+        this.diasOperacion = configData['diasOperacion'] || [];
+
+        // Actualizar valores de los inputs
+        if (this.horaAperturaInput) this.horaAperturaInput.nativeElement.value = this.horaApertura;
+        if (this.horaCierreInput) this.horaCierreInput.nativeElement.value = this.horaCierre;
+        if (this.numeroParqueosInput) this.numeroParqueosInput.nativeElement.value = this.numeroParqueos.toString();
+        if (this.tarifaHoraInput) this.tarifaHoraInput.nativeElement.value = this.tarifas.hora.toString();
+        if (this.tarifaDiaInput) this.tarifaDiaInput.nativeElement.value = this.tarifas.dia.toString();
+        if (this.tarifaMesInput) this.tarifaMesInput.nativeElement.value = this.tarifas.mes.toString();
+
+        // Marcar los días seleccionados
+        this.diasOperacion.forEach((dia) => {
+          const checkbox = document.getElementById(dia) as HTMLInputElement;
+          if (checkbox) checkbox.checked = true;
+        });
       }
     } catch (error) {
       console.error('Error fetching parking configuration:', error);
@@ -71,7 +67,7 @@ export class ConfParqueoComponent implements OnInit {
   }
 
   async configurarYDefinir(): Promise<void> {
-    // Retrieve values from inputs
+    // Obtener valores de los inputs
     this.horaApertura = this.horaAperturaInput.nativeElement.value || '08:00';
     this.horaCierre = this.horaCierreInput.nativeElement.value || '20:00';
     this.numeroParqueos = parseInt(this.numeroParqueosInput.nativeElement.value || '10');
@@ -80,10 +76,13 @@ export class ConfParqueoComponent implements OnInit {
     this.tarifas.dia = parseFloat(this.tarifaDiaInput.nativeElement.value || '0');
     this.tarifas.mes = parseFloat(this.tarifaMesInput.nativeElement.value || '0');
 
-    // Display alert for tariffs
-    alert(`Tarifas definidas:\nHora: $${this.tarifas.hora}\nDía: $${this.tarifas.dia}\nMes: $${this.tarifas.mes}`);
+    // Capturar los días seleccionados
+    const checkboxes = document.querySelectorAll('#diasOperacion input[type="checkbox"]');
+    this.diasOperacion = Array.from(checkboxes)
+      .filter((checkbox: any) => checkbox.checked)
+      .map((checkbox: any) => checkbox.id);
 
-    // Save or update the configuration in Firestore
+    // Guardar la configuración en Firestore
     await this.saveOrUpdateConfigurationToFirestore();
   }
 
@@ -94,32 +93,22 @@ export class ConfParqueoComponent implements OnInit {
         horaCierre: this.horaCierre,
         numeroParqueos: this.numeroParqueos,
         tarifas: this.tarifas,
+        diasOperacion: this.diasOperacion, // Guardar los días seleccionados
       };
 
-      // Reference to the collection
       const collectionRef = collection(firestore, 'parqueo-configuraciones');
-
-      // Check if a configuration already exists
       const q = query(collectionRef);
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
-        // If a configuration exists, update the first document
         const existingDoc = querySnapshot.docs[0];
         await updateDoc(doc(firestore, 'parqueo-configuraciones', existingDoc.id), parqueoData);
-        console.log('Configuración actualizada en Firestore:', parqueoData);
-        this.router.navigate(['pages/Main']);
-
-        
       } else {
-        // If no configuration exists, add a new document
         await addDoc(collectionRef, parqueoData);
-        console.log('Nueva configuración guardada en Firestore:', parqueoData);
-        this.router.navigate(['pages/Main']);
       }
 
-      // Optional: Reload the configuration to reflect the latest changes
-      await this.loadConfigurationFromFirestore();
+      alert('Configuración guardada correctamente');
+      this.router.navigate(['pages/Main']);
     } catch (error) {
       console.error('Error al guardar la configuración en Firestore:', error);
       alert('No se pudo guardar la configuración del parqueadero');

@@ -10,6 +10,18 @@
 <label for="numeroParqueos">Número de parqueos:</label>
 <input #numeroParqueosInput type="number" id="numeroParqueos" value="10" min="1" max="100">
 
+<!-- Días de operación -->
+<label>Días de operación:</label>
+<div id="diasOperacion">
+  <label><input type="checkbox" id="lunes" value="Lunes"> Lunes</label>
+  <label><input type="checkbox" id="martes" value="Martes"> Martes</label>
+  <label><input type="checkbox" id="miercoles" value="Miércoles"> Miércoles</label>
+  <label><input type="checkbox" id="jueves" value="Jueves"> Jueves</label>
+  <label><input type="checkbox" id="viernes" value="Viernes"> Viernes</label>
+  <label><input type="checkbox" id="sabado" value="Sábado"> Sábado</label>
+  <label><input type="checkbox" id="domingo" value="Domingo"> Domingo</label>
+</div>
+
 <!-- Definición de tarifas -->
 <label for="tarifaHora">Tarifa por hora:</label>
 <input #tarifaHoraInput type="number" id="tarifaHora" value="0.25" min="0">

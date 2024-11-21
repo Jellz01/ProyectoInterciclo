@@ -18,6 +18,7 @@ export class MainComponent implements OnInit {
   horaCierre: string = '20:00';
   numeroParqueos: number = 10;
   tarifas: { hora: number; dia: number; mes: number } = { hora: 0, dia: 0, mes: 0 };
+  diasApertura: string[] = []; // Example: ['Lunes', 'Martes', 'Miércoles']
 
   // Vehicle tracking
   placasEnParqueadero: string[] = [];
@@ -42,18 +43,6 @@ export class MainComponent implements OnInit {
     this.fetchPlatesFromFirestore();
   }
 
-   // Navigation methods
-   guardarEmail(): void {
-    this.emailU = localStorage.getItem('userEmail') as string;
-    console.log("final", this.emailU);
-    localStorage.setItem('userEmail', this.emailU);
-    this.editarPerfil();
-  }
-
-  editarPerfil(): void {
-    this.router.navigate(['pages/editar']);
-    console.log("Email del usuario Guardado: ", localStorage.getItem('userEmail'));
-  }
 
   gestionarParqueadero(): void {
     this.router.navigate(['pages/configParqueo']);
@@ -70,7 +59,18 @@ export class MainComponent implements OnInit {
   gestionarContrato(): void {
     this.router.navigate(['/pages/contratos']);
   }
+  // Navigation methods
+  guardarEmail(): void {
+    this.emailU = localStorage.getItem('userEmail') as string;
+    console.log("final", this.emailU);
+    localStorage.setItem('userEmail', this.emailU);
+    this.editarPerfil();
+  }
 
+  editarPerfil(): void {
+    this.router.navigate(['pages/editar']);
+    console.log("Email del usuario Guardado: ", localStorage.getItem('userEmail'));
+  }
 
   // Fetch parking configurations from Firestore
   async fetchParkingConfigurations(): Promise<void> {
@@ -78,18 +78,20 @@ export class MainComponent implements OnInit {
       const collectionRef = collection(firestore, 'parqueo-configuraciones');
       const q = query(collectionRef);
       const querySnapshot = await getDocs(q);
-
+  
       if (!querySnapshot.empty) {
         const configDoc = querySnapshot.docs[0];
         const configData = configDoc.data();
+  
+        this.horaApertura = configData['horaApertura'] || this.horaApertura;
+        this.horaCierre = configData['horaCierre'] || this.horaCierre;
+        this.numeroParqueos = configData['numeroParqueos'] || this.numeroParqueos;
+        this.tarifas = configData['tarifas'] || this.tarifas;
 
-        // Update component properties
-        this.horaApertura = configData['horaApertura'];
-        this.horaCierre = configData['horaCierre'];
-        this.numeroParqueos = configData['numeroParqueos'];
-        this.tarifas = configData['tarifas'];
+        this.diasApertura = Array.isArray(configData['diasOperacion'])
+          ? configData['diasOperacion']
+          : ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
-        // Configure parking spaces and update display after fetching configurations
         this.configurarParqueadero();
         this.updateConfigurationDisplay();
       }
@@ -107,36 +109,35 @@ export class MainComponent implements OnInit {
       tarifaMes: document.getElementById('infoTarifaMes'),
       horarioApertura: document.getElementById('horarioApertura'),
       horarioCierre: document.getElementById('horarioCierre'),
-      numeroParqueosInfo: document.getElementById('numeroParqueosInfo')
+      numeroParqueosInfo: document.getElementById('numeroParqueosInfo'),
+      diasApertura: document.getElementById('diasApertura'),
     };
-
-    if (elements.tarifaHora) elements.tarifaHora.textContent = `$${this.tarifas.hora}`;
-    if (elements.tarifaDia) elements.tarifaDia.textContent = `$${this.tarifas.dia}`;
-    if (elements.tarifaMes) elements.tarifaMes.textContent = `$${this.tarifas.mes}`;
+  
+    if (elements.tarifaHora) elements.tarifaHora.textContent = `${this.tarifas.hora}`;
+    if (elements.tarifaDia) elements.tarifaDia.textContent = `${this.tarifas.dia}`;
+    if (elements.tarifaMes) elements.tarifaMes.textContent = `${this.tarifas.mes}`;
     if (elements.horarioApertura) elements.horarioApertura.textContent = this.horaApertura;
     if (elements.horarioCierre) elements.horarioCierre.textContent = this.horaCierre;
     if (elements.numeroParqueosInfo) elements.numeroParqueosInfo.textContent = this.numeroParqueos.toString();
+    if (elements.diasApertura) elements.diasApertura.textContent = this.diasApertura.join(', ');
   }
 
   // Configure parking spaces
   configurarParqueadero(): void {
     this.parqueadero = document.getElementById('parqueadero') as HTMLElement;
     this.parqueadero.innerHTML = '';
-
-    // Create parking spaces dynamically based on the actual number of spaces
+  
     for (let i = 1; i <= this.numeroParqueos; i++) {
       const espacio = document.createElement('div');
       espacio.className = 'espacio';
       espacio.dataset['espacio'] = i.toString();
-      espacio.textContent = `Espacio ${i}`;
-      this.parqueadero.appendChild(espacio);
 
-      // If a plate is already parked in this space, set the plate
       const placa = Object.keys(this.placasOcupadas).find(key => this.placasOcupadas[key] === i);
-      if (placa) {
-        espacio.classList.add('ocupado');
-        espacio.textContent = placa;
-      }
+      espacio.innerHTML = placa
+        ? `<span class="placa">${placa}</span>`
+        : `Espacio ${i}`;
+
+      this.parqueadero.appendChild(espacio);
     }
   }
 
@@ -153,19 +154,10 @@ export class MainComponent implements OnInit {
     const espacio = document.querySelector('.espacio:not(.ocupado)') as HTMLElement;
     if (espacio) {
       espacio.classList.add('ocupado');
-      espacio.textContent = placa;
+      espacio.innerHTML = `<span class="placa">${placa}</span>`;
       this.placasOcupadas[placa] = parseInt(espacio.dataset['espacio'] || "0");
       placaInput.value = '';
-  
-      const carAnimation = document.createElement('div');
-      carAnimation.className = 'car-animation';
-      espacio.appendChild(carAnimation);
-  
-      setTimeout(() => carAnimation.remove(), 1000);
-  
       this.updatePlateList();
-  
-      // Save the plate to Firestore
       this.savePlateToFirestore(placa, this.placasOcupadas[placa]);
     } else {
       alert("No hay espacios disponibles.");
@@ -173,9 +165,7 @@ export class MainComponent implements OnInit {
   }
 
   savePlateToFirestore(placa: string, espacioId: number): void {
-    const platesCollection = collection(db, 'placas'); // Reference to the 'placas' collection
-    
-    // Query to check if the plate already exists
+    const platesCollection = collection(db, 'placas');
     const checkPlateQuery = query(platesCollection, where("placa", "==", placa));
     
     getDocs(checkPlateQuery)
@@ -185,8 +175,7 @@ export class MainComponent implements OnInit {
           alert("Placa Ya se encuentra registrada");
           return;
         }
-  
-        // If it does not exist, save it with 'placa' as the document ID
+
         return setDoc(doc(platesCollection, placa), {
           placa: placa,
           espacioId: espacioId,
@@ -200,7 +189,6 @@ export class MainComponent implements OnInit {
         console.error("Error al guardar la placa: ", error);
       });
   }
-  
 
   // Remove a vehicle from a parking space
   salirEspacio(): void {
@@ -211,20 +199,16 @@ export class MainComponent implements OnInit {
     const espacio = document.querySelector(`.espacio[data-espacio="${espacioNum}"]`) as HTMLElement;
     if (espacio) {
       espacio.classList.remove('ocupado');
-      espacio.textContent = `Espacio ${espacioNum}`;
+      espacio.innerHTML = `Espacio ${espacioNum}`;
       delete this.placasOcupadas[placa];
       placaInput.value = '';
       this.updatePlateList();
-  
-      // Remove the plate from Firestore
       this.removePlateFromFirestore(placa);
     }
   }
   
   removePlateFromFirestore(placa: string): void {
-    const platesCollection = collection(db, 'placas'); // Referencia a la colección 'placas'
-  
-    // Crear una consulta para encontrar el documento con la placa especificada
+    const platesCollection = collection(db, 'placas');
     const plateQuery = query(platesCollection, where("placa", "==", placa));
   
     getDocs(plateQuery)
@@ -233,8 +217,7 @@ export class MainComponent implements OnInit {
           console.log("No se encontró ninguna placa con ese valor en Firestore.");
           return;
         }
-  
-        // Iterar sobre los documentos coincidentes y eliminarlos (por si hay duplicados)
+
         querySnapshot.forEach((docSnap) => {
           deleteDoc(doc(platesCollection, docSnap.id))
             .then(() => {
@@ -254,31 +237,28 @@ export class MainComponent implements OnInit {
   updatePlateList(): void {
     const listaPlacasContenido = document.getElementById('listaPlacasContenido') as HTMLUListElement;
     listaPlacasContenido.innerHTML = '';
-    
-    for (const placa in this.placasOcupadas) {
+  
+    for (const placa of Object.keys(this.placasOcupadas)) {
       const li = document.createElement('li');
       li.textContent = placa;
       listaPlacasContenido.appendChild(li);
     }
   }
 
-  // Fetch plates from Firestore
   async fetchPlatesFromFirestore(): Promise<void> {
     try {
-      const collectionRef = collection(firestore, 'placas');
-      const q = query(collectionRef);
-      const querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const placa = data['placa'];
-        const espacioId = data['espacioId'];
-        this.placasOcupadas[placa] = espacioId;
+      const platesCollection = collection(db, 'placas');
+      const querySnapshot = await getDocs(platesCollection);
+  
+      this.placasOcupadas = {};
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        this.placasOcupadas[data['placa']] = data['espacioId'];
       });
-
-      this.configurarParqueadero(); // Rebuild the parking layout after loading plates from Firestore
+      this.configurarParqueadero();
+      this.updatePlateList();
     } catch (error) {
-      console.error("Error fetching plates from Firestore:", error);
+      console.error("Error al recuperar las placas desde Firestore: ", error);
     }
   }
 }
