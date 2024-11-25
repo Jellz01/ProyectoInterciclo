@@ -1,0 +1,63 @@
+[debug] [2024-11-25T07:12:28.636Z] ----------------------------------------------------------------------
+[debug] [2024-11-25T07:12:28.640Z] Command:       /usr/bin/node /usr/local/bin/firebase init
+[debug] [2024-11-25T07:12:28.641Z] CLI Version:   13.25.0
+[debug] [2024-11-25T07:12:28.641Z] Platform:      linux
+[debug] [2024-11-25T07:12:28.642Z] Node Version:  v20.17.0
+[debug] [2024-11-25T07:12:28.642Z] Time:          Mon Nov 25 2024 07:12:28 GMT+0000 (Greenwich Mean Time)
+[debug] [2024-11-25T07:12:28.642Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-11-25T07:12:28.775Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-11-25T07:12:28.776Z] > authorizing via signed-in user (jellzwellesley@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /home/jellz/Documents/ParqueaderoPI
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2024-11-25T07:12:30.337Z] Using project from CLI flag: jfintegrador
+[debug] [2024-11-25T07:12:30.339Z] Checked if tokens are valid: false, expires at: 1732517847644
+[debug] [2024-11-25T07:12:30.339Z] Checked if tokens are valid: false, expires at: 1732517847644
+[debug] [2024-11-25T07:12:30.340Z] > refreshing access token with scopes: []
+[debug] [2024-11-25T07:12:30.344Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2024-11-25T07:12:30.344Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-11-25T07:12:30.677Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2024-11-25T07:12:30.677Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-11-25T07:12:30.689Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/jfintegrador [none]
+[debug] [2024-11-25T07:12:31.220Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/jfintegrador 200
+[debug] [2024-11-25T07:12:31.220Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/jfintegrador {"projectId":"jfintegrador","projectNumber":"138144514455","displayName":"JFIntegrador","name":"projects/jfintegrador","resources":{"hostingSite":"jfintegrador"},"state":"ACTIVE","etag":"1_9ad0d911-1a4d-4bbb-8fe5-eb0583327813"}
+[info] i  Using project jfintegrador (JFIntegrador) 
+[info] 
+=== Apphosting Setup
+[debug] [2024-11-25T07:12:31.230Z] Checked if tokens are valid: true, expires at: 1732522349677
+[debug] [2024-11-25T07:12:31.230Z] Checked if tokens are valid: true, expires at: 1732522349677
+[debug] [2024-11-25T07:12:31.231Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/jfintegrador/billingInfo [none]
+[debug] [2024-11-25T07:12:31.703Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/jfintegrador/billingInfo 200
+[debug] [2024-11-25T07:12:31.704Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/jfintegrador/billingInfo {"name":"projects/jfintegrador/billingInfo","projectId":"jfintegrador","billingAccountName":"billingAccounts/0154DF-6EC997-91EC45","billingEnabled":true}
+[info] i  Writing default settings to apphosting.yaml... 
+[info] i  apphosting.yaml is unchanged 
+[info] ✔  Create a new App Hosting backend with `firebase apphosting:backends:create` 
+[info] 
+[info] i  Writing configuration info to firebase.json... 
+[debug] [2024-11-25T07:12:31.975Z] Error: EACCES: permission denied, open '/home/jellz/Documents/ParqueaderoPI/firebase.json'
+    at Object.writeFileSync (node:fs:2368:20)
+    at Config.writeProjectFile (/usr/local/lib/node_modules/firebase-tools/lib/config.js:160:12)
+    at /usr/local/lib/node_modules/firebase-tools/lib/commands/init.js:205:16
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[error] 
+[error] Error: An unexpected error has occurred.
