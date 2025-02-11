@@ -1,33 +1,52 @@
-<div class="container">
-  <h2>Gestión de Contratos de Arriendo Mensual</h2>
+<div class="form-container">
+  <h2>Agregar Contrato</h2>
+  <form (ngSubmit)="addContrato()">
+    <div class="form-group">
+      <label for="cliente_id">Cliente:</label>
+      <select id="cliente_id" [(ngModel)]="newContrato.clienteId" name="cliente_id" required>
+        <option *ngFor="let persona of usuario" [value]="persona.id + '|' + persona.nombre">
+          {{ persona.nombre }}
+        </option>
+      </select>
+    </div>
 
-  <form [formGroup]="contratoForm" (ngSubmit)="registrarContrato()">
-    <label for="clienteNombre">Nombre del cliente:</label>
-    <select id="clienteNombre" formControlName="clienteId" required>
-      <option value="">Seleccione un cliente</option>
-      <!-- Dynamically populate clientes -->
-      <option *ngFor="let cliente of clientes" [value]="cliente.id">
-        {{ cliente.nombre }}, {{ cliente.cedula }}
-      </option>
-    </select>
+    <div class="form-group">
+      <label for="espacio_id">Espacio ID:</label>
+      <select id="espacio_id" [(ngModel)]="newContrato.espacio" name="espacio_id" required>
+        <option *ngFor="let num of espaciosArray" [value]="num">Espacio {{ num }}</option>
+      </select>
+    </div>
 
-    <label for="placaContrato">Placa del vehículo:</label>
-    <input type="text" id="placaContrato" formControlName="placaContrato" placeholder="Ingrese la placa (max 7 caracteres)" maxlength="7" required>
+    <div class="form-group">
+      <label for="placa">Placa:</label>
+      <input type="text" id="placa" [(ngModel)]="newContrato.placa" name="placa" required>
+    </div>
 
-    <label for="inicioContrato">Fecha de inicio:</label>
-    <input type="date" id="inicioContrato" formControlName="inicioContrato" required>
+    <div class="form-group">
+      <label for="fecha_inicio">Fecha Inicio:</label>
+      <input type="date" id="fecha_inicio" [(ngModel)]="newContrato.fechaInicio" name="fecha_inicio" required>
+    </div>
 
-    <label for="finContrato">Fecha de fin:</label>
-    <input type="date" id="finContrato" formControlName="finContrato" required>
+    <div class="form-group">
+      <label for="fecha_final">Fecha Final:</label>
+      <input type="date" id="fecha_final" [(ngModel)]="newContrato.fechaFinal" name="fecha_final" required>
+    </div>
 
-    <label for="espacioContrato">Espacio solicitado:</label>
-    <input type="text" id="espacioContrato" formControlName="espacioContrato" placeholder="Indique el espacio requerido" required>
+    <div class="form-group">
+      <label for="total">Total:</label>
+      <input type="text" id="total" [(ngModel)]="newContrato.total" name="total" required readonly>
+    </div>
 
-    <button type="submit" [disabled]="contratoForm.invalid">Registrar contrato</button>
-    
-    <!-- Error message -->
-    <div *ngIf="errorMessage" style="color: red; margin-top: 10px;">
-      {{ errorMessage }}
+    <div class="form-group">
+      <button type="submit" class="btn-submit">Agregar Contrato</button>
     </div>
   </form>
+
+  <h2>Lista de Contratos</h2>
+  <ul class="contract-list">
+    <li *ngFor="let contrato of contratos">
+      <strong>{{ contrato.clienteId }}</strong> - {{ contrato.placa }} 
+      <span class="date-range">({{ contrato.fechaInicio }} - {{ contrato.fechaFinal }})</span>
+    </li>
+  </ul>
 </div>

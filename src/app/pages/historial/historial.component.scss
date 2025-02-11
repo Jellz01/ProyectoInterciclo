@@ -1,0 +1,51 @@
+// Estilos generales del componente
+.btn-cargar {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-cargar:hover {
+  background-color: #0056b3;
+}
+
+.historial-container {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.historial-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.historial-table th, .historial-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.historial-table th {
+  background-color: #007BFF;
+  color: white;
+  font-weight: bold;
+}
+
+.historial-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.no-data-message {
+  font-size: 18px;
+  color: #555;
+  font-style: italic;
+}

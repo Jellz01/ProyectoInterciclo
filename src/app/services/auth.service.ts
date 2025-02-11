@@ -1,82 +1,104 @@
 import { Injectable } from '@angular/core';
-import { auth, firestore } from '../firebase.config'; // Ensure your Firebase config is correctly imported
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth';
-import { Firestore, doc, getDoc, getFirestore, collection, query, where, getDocs, DocumentSnapshot, QuerySnapshot, DocumentData } from 'firebase/firestore';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { Observable, catchError, map, of, tap } from 'rxjs';
+
+interface User {
+  email: string;
+  // Add other user properties
+}
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class AuthService {
-  private userSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
-  user$: Observable<User | null> = this.userSubject.asObservable();
+  private authUrl = 'http://localhost:8081/api/auth/user';
+  private readonly USER_KEY = 'currentUser';
+  private readonly EMAIL_KEY = 'emailFG';  // New constant for email key
 
-  email ='';
-
-  private firestore: Firestore;
-
-  constructor() {
-    // Initialize Firestore
-    this.firestore = getFirestore();
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
+    // Initialize user from localStorage
     this.initializeUser();
   }
 
-  private initializeUser() {
-    // Listen to authentication state changes
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        this.userSubject.next(user);
-      } else {
-        this.userSubject.next(null);
+  // Add the public method to get email here
+  public getEmail(): string | null {
+    return localStorage.getItem(this.EMAIL_KEY);
+  }
+
+  private initializeUser(): void {
+    const userData = localStorage.getItem(this.USER_KEY);
+    if (userData) {
+      try {
+        this.user = JSON.parse(userData);
+        if (this.user?.email) {
+          // Save the email to emailFG key only if the user and email exist
+          localStorage.setItem(this.EMAIL_KEY, this.user.email);
+        }
+      } catch (e) {
+        this.clearUser();
+      }
+    }
+  }
+  
+  private user: User | null = null;
+
+  fetchUser(): Observable<User | null> {
+    return this.http.get<User>(this.authUrl, { withCredentials: true }).pipe(
+      tap(user => {
+        this.setUser(user);
+        console.log('User Email:', user.email); // Add this line to log the email
+        return user;
+      }),
+      catchError(error => {
+        this.clearUser();
+        return of(null);
+      })
+    );
+  }
+
+  private setUser(user: User): void {
+    this.user = user;
+    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    // Save the email to emailFG key
+    localStorage.setItem(this.EMAIL_KEY, user.email);
+  }
+
+  private clearUser(): void {
+    this.user = null;
+    localStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.EMAIL_KEY);  // Remove the email when clearing user
+  }
+
+  isAuthenticated(): Observable<boolean> {
+    if (!this.user) {
+      return this.fetchUser().pipe(
+        map(user => !!user),  // Convert User | null to boolean
+        catchError(() => of(false))
+      );
+    }
+    return of(true);
+  }
+  
+  login(): void {
+    window.location.href = 'http://localhost:8081/oauth2/authorization/google';
+  }
+
+  logout(): void {
+    this.http.post('http://localhost:8081/logout', {}, {
+      withCredentials: true
+    }).subscribe({
+      next: () => {
+        this.clearUser();
+        this.router.navigate(['/pages/auth']);
+      },
+      error: () => {
+        this.clearUser();
+        this.router.navigate(['/pages/auth']);
       }
     });
-  }
-
-  signUp(email: string, password: string) {
-    return createUserWithEmailAndPassword(auth, email, password);
-  }
-
-  logIn(email: string, password: string) {
-    return signInWithEmailAndPassword(auth, email, password);
-  }
-
-  logOut() {
-    return auth.signOut();
-  }
-
-   // Method to get user profile by UID
-   getUserProfile(uid: string): Promise<DocumentSnapshot> {
-    const userRef = doc(this.firestore, 'users', uid);  // Firestore path
-    return getDoc(userRef);  // Fetch the document
-  }
-
-  // New method to get user profile by email
-  getUserProfileByEmail(email: string): Promise<QuerySnapshot<DocumentData>> {
-    const usersCollection = collection(this.firestore, 'users');
-    const emailQuery = query(usersCollection, where('email', '==', email));
-    return getDocs(emailQuery);
-  }
-
-  setEmail = (email: string): void => {
-    this.email = email;
-    console.log("Email to store:", email); // Check if email has a value
-    localStorage.setItem('userEmail', email);
-    console.log("email ls: ", this.email)
-}
-
-setEmailEditar = (email: string): void => {
-
-  this.email = email;
-  localStorage.setItem('editarEmail',email);
-  console.log("Editar email es: ",email)
-
-}
-
-
-  
-
-  // Get email
-  getEmail(): string | null {
-    return this.email || localStorage.getItem('userEmail');
   }
 }

@@ -1,104 +1,84 @@
-/* Default styles for form elements */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-}
-
-html, body {
-    height: 100%; /* Ensure the body takes full height */
-}
-
-body {
-    background-color: #f4f4f9;
-    display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    height: 100%; /* Full height */
-    padding: 0 20px;
-    text-align: center;
-}
-
-h2 {
-    color: #333;
-    margin-bottom: 20px;
-    width: 100%;
-    align-items: center;
-    align-self: center;
-    align-content: center;
-}
-
 form {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 600px;
     display: flex;
     flex-direction: column;
-    align-items: stretch; /* Ensure form items take the full width */
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: #555;
-    width: 100%;
-}
-
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    color: #333;
-}
-
-input[type="date"] {
-    cursor: pointer;
-}
-
-input:focus, select:focus {
-    outline: none;
-    border-width: 3px;
-    border-color: #5e0a8c;
-}
-
-small {
-    color: #e74c3c;
-    font-size: 12px;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
-button:hover:not(:disabled) {
-    background-color: #0056b3;
-}
-
-/* Style for readonly inputs */
-input[readonly] {
-    background-color: #f0f0f0;  /* Grey background */
-    color: #aaa;  /* Light grey text */
-    border-color: #ddd;  /* Lighter border color */
-    cursor: not-allowed;  /* Show the not-allowed cursor */
-}
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+    input#email[readonly] {
+      background-color: #e0e0e0;  /* Darker grey color */
+      cursor: not-allowed;       /* Show disabled cursor */
+    }
+    input#cedula[readonly] {
+        background-color: #e0e0e0;  /* Darker grey color */
+        cursor: not-allowed;       /* Show disabled cursor */
+      }
+      input#fechaNacimiento[readonly] {
+        background-color: #e0e0e0;  /* Darker grey color */
+        cursor: not-allowed;       /* Show disabled cursor */
+      }
+      input#role[readonly] {
+        background-color: #e0e0e0;  /* Darker grey color */
+        cursor: not-allowed;       /* Show disabled cursor */
+      }
+  
+  
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  
+    input,
+    select {
+      padding: 10px;
+      margin-bottom: 20px; // Más espacio entre los campos
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+      background: white;
+      appearance: none; // Oculta el diseño nativo en algunos navegadores
+      cursor: pointer;
+  
+      &:focus {
+        border-color: #007bff;
+        outline: none;
+      }
+    }
+  
+    select {
+      padding: 12px;
+      background: #fff;
+      font-size: 16px;
+      
+      option {
+        padding: 10px;
+      }
+    }
+  
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+      margin-top: 20px; // Aumentamos la separación del botón con respecto al select
+  
+      &:hover {
+        background: #0056b3;
+      }
+    }
+    .error-message {
+      color: red;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+    
+  }
+  

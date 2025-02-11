@@ -1,110 +1,100 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-}
-
-body {
-    background-color: #f4f4f9;
+.form-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    max-width: 500px;
+    margin: 20px auto;
     padding: 20px;
-    text-align: center;
-}
-
-h2 {
-    color: #333;
-    margin-bottom: 20px;
-    width: 100%;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-}
-
-/* Form Styling */
-form {
-    background-color: #fff;
-    padding: 30px;
+    background: #f4f4f4;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 600px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-/* Label Styling */
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: #555;
-    width: 100%;
-}
-
-/* Input and Select Styling */
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    color: #333;
-}
-
-input[type="date"] {
-    cursor: pointer;
-}
-
-input:focus, select:focus {
-    outline: none;
-    border-width: 3px;
-    border-color: #5e0a8c;
-}
-
-/* Error Message Styling */
-small {
-    color: #e74c3c;
-    font-size: 12px;
-}
-
-/* Button Styling */
-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
-button:hover:not(:disabled) {
-    background-color: #0056b3;
-}
-
-/* Error Message */
-div {
-    text-align: center;
-    font-size: 14px;
-    color: red;
-    margin-top: 10px;
-}
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+  
+    .form-group {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+  
+      label {
+        font-weight: bold;
+        color: #444;
+        margin-bottom: 8px;
+      }
+  
+      input,
+      select {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        background-color: #fff;
+        cursor: pointer;
+        
+        &:focus {
+          border-color: #007bff;
+          outline: none;
+          box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        }
+        
+        &[readonly] {
+          background-color: #e0e0e0;
+          cursor: not-allowed;
+        }
+      }
+  
+      select {
+        padding: 12px;
+        font-size: 16px;
+        background: #fff;
+      }
+  
+      button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background: #0056b3;
+        }
+      }
+    }
+  
+    .contract-list {
+      list-style: none;
+      padding: 0;
+      
+      li {
+        padding: 12px;
+        background: #fff;
+        margin: 10px 0;
+        border-left: 5px solid #007bff;
+        border-radius: 8px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        
+        .date-range {
+          font-size: 14px;
+          color: #777;
+        }
+      }
+    }
+  
+    .error-message {
+      color: red;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+  }
+  

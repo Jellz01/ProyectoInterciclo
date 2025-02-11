@@ -1,0 +1,71 @@
+form {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #f4f4f4;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+  input#email[readonly] {
+    background-color: #e0e0e0;  /* Darker grey color */
+    cursor: not-allowed;       /* Show disabled cursor */
+  }
+
+
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  input,
+  select {
+    padding: 10px;
+    margin-bottom: 20px; // Más espacio entre los campos
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    background: white;
+    appearance: none; // Oculta el diseño nativo en algunos navegadores
+    cursor: pointer;
+
+    &:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+  }
+
+  select {
+    padding: 12px;
+    background: #fff;
+    font-size: 16px;
+    
+    option {
+      padding: 10px;
+    }
+  }
+
+  button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+    margin-top: 20px; // Aumentamos la separación del botón con respecto al select
+
+    &:hover {
+      background: #0056b3;
+    }
+  }
+  .error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
+}

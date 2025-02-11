@@ -1,359 +1,332 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { AuthService } from '../../services/auth.service';
-import { getDocs, collection, query, setDoc, doc, deleteDoc, where } from "firebase/firestore";
-import { firestore, db } from "../../firebase.config";
-import { CommonModule, NgForOf, NgFor, NgIf } from "@angular/common";
+import { ConfiguracionParqueaderoService } from "../../services/configuracion-parqueadero.service";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { IngresoPlacasService } from "../../services/ingreso-placas.service";
+import { EspaciosService } from "../../services/espacios.service";
+import { HistorialService } from "../../services/historial.service";
+
+// Define the structure of the Espacio object
+interface Espacio {
+  id: number;
+  espacio: string;
+  placa: string;
+  fechaHoraIngreso:string;
+  fechaHoraSalida?: string;
+}
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [NgForOf, NgFor, NgIf, CommonModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit {
-  // Configuration variables
   horaApertura: string = '08:00';
   horaCierre: string = '20:00';
+  fechaHoraIngreso: string='';
+  fechaHoraSalida:string='';
   numeroParqueos: number = 10;
   tarifas: { hora: number; dia: number; mes: number } = { hora: 0, dia: 0, mes: 0 };
-  diasApertura: string[] = []; // Example: ['Lunes', 'Martes', 'Miércoles']
-
-  // Vehicle tracking
+  diasApertura: string[] = [];
   placasEnParqueadero: string[] = [];
-  placasOcupadas: { [key: string]: number } = {};
-  
-  // User-related properties
-  emailU: string = '';
-  users: any[] = [];
-  role: string = "";
-
-  parqueadero!: HTMLElement;
   placaIngreso: string = '';
   placaSalida: string = '';
+  espaciosDisponibles: Espacio[] = [];
+  espaciosUsados: Espacio[] = [];
+  espacioSeleccionado: string = '';
 
   constructor(
-    private router: Router, 
-    private authService: AuthService
+    private router: Router,
+    private configuracionesS: ConfiguracionParqueaderoService,
+    private ingresoPService: IngresoPlacasService,
+    private espaciosService: EspaciosService,
+    private historialService: HistorialService
   ) {}
 
-  async ngOnInit(): Promise<void> {
-    await this.fetchParkingConfigurations();
-    await this.loadAllParkingData();
+  ngOnInit(): void {
+    console.log("ngOnInit called");
+    this.cargarDatosIniciales();
+    this.getEspacios();
   }
 
-  // Navigation methods
+
+  calculateTariff(fechaHoraIngreso: string, fechaHoraSalida: string): number {
+    // Convert the fechaHoraIngreso and fechaHoraSalida to Date objects
+    const ingreso = new Date(fechaHoraIngreso);
+    const salida = new Date(fechaHoraSalida);
+    
+    console.log('Fecha de ingreso:', ingreso);
+    console.log('Fecha de salida:', salida);
+  
+    // Ensure that the salida date is after the ingreso date
+    if (salida <= ingreso) {
+      alert('La hora de salida debe ser posterior a la hora de ingreso.');
+      console.log('La hora de salida no es posterior a la hora de ingreso.');
+      return 0;
+    }
+  
+    // Calculate the time difference in milliseconds
+    const diffTime = salida.getTime() - ingreso.getTime();
+    console.log('Diferencia de tiempo en milisegundos:', diffTime);
+  
+    // Convert time difference from milliseconds to hours
+    const diffHours = diffTime / (1000 * 3600);
+    console.log('Diferencia de tiempo en horas:', diffHours);
+  
+    let totalTariff: number;
+  
+    // Determine the correct tariff based on the time difference
+    if (diffHours < 24) {
+      // Apply hourly tariff
+      totalTariff = this.tarifas.hora * diffHours;
+      console.log('Tarifa por hora:', this.tarifas.hora, 'Total:', totalTariff);
+    } else if (diffHours >= 24 && diffHours < 730) {
+      // Apply daily tariff
+      const diffDays = diffHours / 24;
+      totalTariff = this.tarifas.dia * diffDays;
+      console.log('Diferencia de tiempo en días:', diffDays);
+      console.log('Tarifa diaria:', this.tarifas.dia, 'Total:', totalTariff);
+    } else {
+      // Apply monthly tariff
+      const diffMonths = diffHours / 730;
+      totalTariff = this.tarifas.mes * diffMonths;
+      console.log('Diferencia de tiempo en meses:', diffMonths);
+      console.log('Tarifa mensual:', this.tarifas.mes, 'Total:', totalTariff);
+    }
+  
+    // Return the calculated tariff
+    console.log('Tarifa total calculada:', totalTariff);
+    return totalTariff;
+  }
+  
+  
+  
+
   gestionarParqueadero(): void {
+    console.log("Navigating to parqueo management");
     this.router.navigate(['pages/configParqueo']);
   }
 
   listarUsuarios(): void {
+    console.log("Navigating to user listing");
     this.router.navigate(['pages/listar']);
   }
 
+  emailM(){
+    this.router.navigate(['pages/email']);
+
+  }
+  configuraciones(){
+    this.router.navigate(['pages/configParqueo'])
+  }
+
+  historial(){
+    this.router.navigate(['pages/historial'])
+  }
+
   listarContratos(): void {
+    console.log("Navigating to contracts listing");
     this.router.navigate(['pages/listarCon']);
   }
 
   gestionarContrato(): void {
+    console.log("Navigating to contract management");
     this.router.navigate(['/pages/contratos']);
   }
 
-  guardarEmail(): void {
-    this.emailU = localStorage.getItem('userEmail') as string;
-    console.log("final", this.emailU);
-    localStorage.setItem('userEmail', this.emailU);
-    this.editarPerfil();
-  }
-
   editarPerfil(): void {
-    this.router.navigate(['pages/editar']);
-    console.log("Email del usuario Guardado: ", localStorage.getItem('userEmail'));
+    console.log("Navigating to profile editing");
+    this.router.navigate(['pages/editarPerfilD']);
+    // Log the stored email from localStorage
+  const storedEmail = localStorage.getItem('editarEmail');
+  console.log('Stored email in localStorage:', storedEmail);
+
   }
 
-  // Data loading methods
-  private async loadAllParkingData(): Promise<void> {
-    try {
-      // Reset parking data
-      this.placasOcupadas = {};
-      
-      // Load plates from both sources
-      await Promise.all([
-        this.fetchPlatesFromFirestore(),
-        this.fetchPlatesFromContratos()
-      ]);
+  cargarDatosIniciales() {
+  this.configuracionesS.getConfiguraciones().subscribe({
+    next: (data) => {
+      console.log('Datos de configuraciones:', data);
+      if (data && data.configuraciones && data.configuraciones.length > 0) {
+        const config = data.configuraciones[0];
+        this.horaApertura = config.hora_apertura;
+        this.horaCierre = config.hora_cierre;
+        this.numeroParqueos = +config.cant_espacios;  // Convert to number
+        this.tarifas.hora = +config.tarifa_hora;
+        this.tarifas.dia = +config.tarifa_dia;
+        this.tarifas.mes = +config.tarifa_mes;
 
-      // Configure parking display once after all data is loaded
-      this.configurarParqueadero();
-      this.updatePlateList();
-    } catch (error) {
-      console.error('Error loading parking data:', error);
-    }
-  }
-
-  // Fetch parking configurations from Firestore
-  async fetchParkingConfigurations(): Promise<void> {
-    try {
-      const collectionRef = collection(firestore, 'parqueo-configuraciones');
-      const q = query(collectionRef);
-      const querySnapshot = await getDocs(q);
-  
-      if (!querySnapshot.empty) {
-        const configDoc = querySnapshot.docs[0];
-        const configData = configDoc.data();
-  
-        this.horaApertura = configData['horaApertura'] || this.horaApertura;
-        this.horaCierre = configData['horaCierre'] || this.horaCierre;
-        this.numeroParqueos = configData['numeroParqueos'] || this.numeroParqueos;
-        this.tarifas = configData['tarifas'] || this.tarifas;
-
-       
-
-        this.diasApertura = Array.isArray(configData['diasOperacion'])
-          ? configData['diasOperacion']
-          : ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-
-        this.updateConfigurationDisplay();
+        // Dynamically generate the available spaces
+        this.espaciosDisponibles = Array.from({ length: this.numeroParqueos }, (_, index) => ({
+          id: index + 1,
+          espacio: `Espacio-${index + 1}`,
+          placa: '',
+          fechaHoraIngreso: ''
+        }));
       }
-    } catch (error) {
-      console.error('Error fetching parking configuration:', error);
-      alert('No se pudo cargar la configuración del parqueadero');
-    }
-  }
+    },
+    error: (err) => console.error('Error al cargar los datos iniciales', err)
+  });
 
-  async fetchPlatesFromFirestore(): Promise<void> {
-    try {
-      const platesCollection = collection(db, 'placas');
-      const querySnapshot = await getDocs(platesCollection);
+  // Fetch parking spaces
+  this.ingresoPService.getEspacios().subscribe({
+    next: (data) => {
+      this.actualizarEspaciosDisponibles();
+      console.log('Espacios disponibles:', this.espaciosDisponibles);
+    },
+    error: (err) => console.error('Error al cargar los espacios', err)
+  });
+}
+
   
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        this.placasOcupadas[data['placa']] = Number(data['espacioId']);
-      });
-  
-      console.log("Placas recuperadas desde Firestore:", this.placasOcupadas);
-    } catch (error) {
-      console.error("Error al recuperar las placas desde Firestore: ", error);
-    }
-  }
 
-  async fetchPlatesFromContratos(): Promise<void> {
-    try {
-      const contratosCollection = collection(db, 'contratos');
-      const querySnapshot = await getDocs(contratosCollection);
-  
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const placa = data['placaContrato'].toUpperCase();
-        const espacioId = Number(data['espacioContrato']);
-  
-        // Only add if the space is not already occupied
-        if (!Object.values(this.placasOcupadas).includes(espacioId)) {
-          this.placasOcupadas[placa] = espacioId;
-        } else {
-          console.warn(`Espacio ${espacioId} ya está ocupado. No se puede asignar a ${placa}`);
-        }
-      });
-  
-      console.log("Placas recuperadas desde Contratos:", this.placasOcupadas);
-    } catch (error) {
-      console.error("Error al recuperar las placas desde Contratos: ", error);
-    }
-  }
-
-  // UI update methods
-  private updateConfigurationDisplay(): void {
-    const elements = {
-      tarifaHora: document.getElementById('infoTarifaHora'),
-      tarifaDia: document.getElementById('infoTarifaDia'),
-      tarifaMes: document.getElementById('infoTarifaMes'),
-      horarioApertura: document.getElementById('horarioApertura'),
-      horarioCierre: document.getElementById('horarioCierre'),
-      numeroParqueosInfo: document.getElementById('numeroParqueosInfo'),
-      diasApertura: document.getElementById('diasApertura'),
-    };
-    localStorage.setItem('np', this.numeroParqueos.toString());
-
-    if (elements.tarifaHora) elements.tarifaHora.textContent = `${this.tarifas.hora}`;
-    if (elements.tarifaDia) elements.tarifaDia.textContent = `${this.tarifas.dia}`;
-    if (elements.tarifaMes) elements.tarifaMes.textContent = `${this.tarifas.mes}`;
-    if (elements.horarioApertura) elements.horarioApertura.textContent = this.horaApertura;
-    if (elements.horarioCierre) elements.horarioCierre.textContent = this.horaCierre;
-    if (elements.numeroParqueosInfo) elements.numeroParqueosInfo.textContent = this.numeroParqueos.toString();
-    if (elements.diasApertura) elements.diasApertura.textContent = this.diasApertura.join(', ');
-  }
-
-  configurarParqueadero(): void {
-    this.parqueadero = document.getElementById('parqueadero') as HTMLElement;
-    if (!this.parqueadero) {
-      console.error('Elemento parqueadero no encontrado');
-      return;
-    }
-    
-    this.parqueadero.innerHTML = '';
-  
-    for (let i = 1; i <= this.numeroParqueos; i++) {
-      const espacio = document.createElement('div');
-      espacio.className = 'espacio';
-      espacio.dataset['espacio'] = i.toString();
-  
-      // Find plate for this space
-      const placa = Object.entries(this.placasOcupadas)
-        .find(([_, espacioId]) => espacioId === i)?.[0];
-      
-      if (placa) {
-        espacio.classList.add('ocupado');
-      }
-      
-      espacio.innerHTML = placa
-        ? `<span class="placa">${placa}</span>`
-        : `Espacio ${i}`;
-      
-      this.parqueadero.appendChild(espacio);
-      
-      console.log(`Espacio ${i} -> Placa: ${placa || 'No asignada'}`);
-    }
-  }
-
-  updatePlateList(): void {
-    const listaPlacasContenido = document.getElementById('listaPlacasContenido') as HTMLUListElement;
-    if (!listaPlacasContenido) {
-      console.error('Elemento listaPlacasContenido no encontrado');
-      return;
-    }
-
-    listaPlacasContenido.innerHTML = '';
-  
-    for (const placa of Object.keys(this.placasOcupadas)) {
-      const li = document.createElement('li');
-      li.textContent = `${placa} - Espacio ${this.placasOcupadas[placa]}`;
-      listaPlacasContenido.appendChild(li);
-    }
-  }
-
-  // Parking space management methods
-  ocuparEspacio(): void {
-    const placaInput = document.getElementById('placaIngreso') as HTMLInputElement;
-    if (!placaInput) {
-      console.error('Elemento placaIngreso no encontrado');
-      return;
-    }
-
-    const placa: string = placaInput.value.toUpperCase().trim();
-  
-    if (!placa) {
-      alert("Por favor ingrese una placa.");
-      return;
-    }
-
-    if (this.placasOcupadas[placa]) {
-      alert("Esta placa ya está registrada en el parqueadero.");
-      return;
-    }
-
-    // Find first available space
-    const espaciosOcupados = new Set(Object.values(this.placasOcupadas));
-    let espacioDisponible: number | null = null;
+  actualizarEspaciosDisponibles() {
+    this.espaciosDisponibles = [];
 
     for (let i = 1; i <= this.numeroParqueos; i++) {
-      if (!espaciosOcupados.has(i)) {
-        espacioDisponible = i;
-        break;
-      }
-    }
+      const espacio = `Espacio-${i}`;
+      const espacioUsado = this.espaciosUsados.find(e => e.espacio === espacio);
 
-    if (espacioDisponible === null) {
-      alert("No hay espacios disponibles en el parqueadero.");
-      return;
-    }
-
-    // Assign the space and update
-    this.placasOcupadas[placa] = espacioDisponible;
-    placaInput.value = '';
-    this.savePlateToFirestore(placa, espacioDisponible);
-    this.configurarParqueadero();
-    this.updatePlateList();
-  }
-
-  salirEspacio(): void {
-    const placaInput = document.getElementById('placaSalida') as HTMLInputElement;
-    if (!placaInput) {
-      console.error('Elemento placaSalida no encontrado');
-      return;
-    }
-
-    const placa: string = placaInput.value.toUpperCase().trim();
-  
-    if (!placa) {
-      alert("Por favor ingrese una placa.");
-      return;
-    }
-
-    if (!this.placasOcupadas[placa]) {
-      alert("Esta placa no está registrada en el parqueadero.");
-      return;
-    }
-
-    delete this.placasOcupadas[placa];
-    placaInput.value = '';
-    this.removePlateFromFirestore(placa);
-    this.configurarParqueadero();
-    this.updatePlateList();
-  }
-
-  // Firestore operations
-  savePlateToFirestore(placa: string, espacioId: number): void {
-    const platesCollection = collection(db, 'placas');
-    const checkPlateQuery = query(platesCollection, where("placa", "==", placa));
-    
-    getDocs(checkPlateQuery)
-      .then((querySnapshot) => {
-        if (!querySnapshot.empty) {
-          console.log("La placa ya está registrada en Firestore.");
-          alert("Placa Ya se encuentra registrada");
-          return;
-        }
-
-        return setDoc(doc(platesCollection, placa), {
-          placa: placa,
-          espacioId: Number(espacioId),
-          timestamp: new Date()
+      if (espacioUsado) {
+        this.espaciosDisponibles.push({
+          id: i,
+          espacio: espacioUsado.espacio,
+          placa: espacioUsado.placa,
+          fechaHoraIngreso: espacioUsado.fechaHoraIngreso
         });
-      })
-      .then(() => {
-        console.log("Placa guardada exitosamente en Firestore!");
-      })
-      .catch((error) => {
-        console.error("Error al guardar la placa: ", error);
-      });
+      } else {
+        this.espaciosDisponibles.push({ id: i, espacio, placa: '', fechaHoraIngreso: '' });
+      }
+    }
   }
 
-  removePlateFromFirestore(placa: string): void {
-    const platesCollection = collection(db, 'placas');
-    const plateQuery = query(platesCollection, where("placa", "==", placa));
+  ocuparEspacio() {
+  if (this.placaIngreso && this.espacioSeleccionado) {
+    const nuevoEspacio: Espacio = { 
+      id: +this.espacioSeleccionado.split('-')[1], 
+      espacio: this.espacioSeleccionado, 
+      placa: this.placaIngreso, 
+      fechaHoraIngreso: this.fechaHoraIngreso // Agregamos la propiedad
+  };
   
-    getDocs(plateQuery)
-      .then((querySnapshot) => {
-        if (querySnapshot.empty) {
-          console.log("No se encontró ninguna placa con ese valor en Firestore.");
+
+    console.log('Hola: ', nuevoEspacio);
+
+    // Crear objeto para historial SIN ID
+    const historialData = { 
+      espacio: nuevoEspacio.espacio, 
+      placa: nuevoEspacio.placa, 
+      fechaHoraIngreso: this.fechaHoraIngreso 
+  };
+  
+
+    // Primero, guardar en historial (sin ID)
+    this.historialService.guardarHistorial(historialData).subscribe({
+      next: () => {
+        console.log("Historial guardado correctamente.");
+
+        // Luego, guardar en espacios
+        this.ingresoPService.createEspacio(nuevoEspacio).subscribe({
+          next: () => {
+            console.log(`${this.placaIngreso} ha ingresado al parqueadero en ${this.espacioSeleccionado}.`);
+
+            this.placasEnParqueadero.push(`${this.espacioSeleccionado} - ${this.placaIngreso}`);
+
+            this.placaIngreso = '';
+            this.espacioSeleccionado = '';
+            this.actualizarEspaciosDisponibles();
+          },
+          error: (err) => console.error('Error al registrar el espacio', err)
+        });
+      },
+      error: (err) => console.error("Error al guardar en historial", err)
+    });
+
+  } else {
+    console.log('Debe ingresar una placa válida y seleccionar un espacio disponible.');
+  }
+}
+
+salirEspacio(placa: string, fechaHoraSalida: string) {
+  try {
+      // Validación: Asegurarse de que la fechaHoraSalida esté definida
+      if (!fechaHoraSalida) {
+          alert('Por favor, ingrese la hora de salida.');
           return;
-        }
+      }
 
-        const deletePromises = querySnapshot.docs.map(doc => 
-          deleteDoc(doc.ref)
-            .then(() => {
-              console.log(`Placa ${placa} eliminada exitosamente de Firestore.`);
-            })
-            .catch((error) => {
-              console.error("Error al eliminar la placa: ", error);
-            })
-        );
+      // Buscar el espacio con la placa correspondiente
+      const espacio = this.espaciosUsados.find(e => e.placa === placa);
 
-        return Promise.all(deletePromises);
-      })
-      .catch((error) => {
-        console.error("Error al buscar la placa en Firestore: ", error);
+      if (!espacio) {
+          alert('Espacio no encontrado.');
+          return;
+      }
+
+      // Validar que la fechaHoraSalida sea posterior a la fechaHoraIngreso
+      const ingreso = new Date(espacio.fechaHoraIngreso);
+      const salida = new Date(fechaHoraSalida);
+
+      if (salida <= ingreso) {
+          alert('La hora de salida debe ser posterior a la hora de ingreso.');
+          return;
+      }
+
+      // Calcular el costo del parqueo
+      const totalCost = this.calculateTariff(espacio.fechaHoraIngreso, fechaHoraSalida);
+      console.log(`Costo del parqueo para placa ${placa}: ${totalCost}`);
+
+      // Proceder con la salida
+      console.log(`Espacio con placa ${placa} ha salido a las ${fechaHoraSalida}`);
+
+      // Eliminar el espacio de la lista
+      this.espaciosUsados = this.espaciosUsados.filter(espacio => espacio.placa !== placa);
+
+      // Llamada al servicio para eliminar el espacio
+      this.espaciosService.deleteByPlaca(placa);
+
+      // Confirmación al usuario
+      alert(`El vehículo con placa ${placa} ha sido registrado como salido. Costo: ${totalCost}`);
+  } catch (error) {
+      console.error("Error al procesar la salida:", error);
+      alert('Hubo un error al procesar la salida del vehículo. Por favor, intente nuevamente.');
+  }
+}
+
+
+
+  
+
+  eliminarPlaca(id: number) {
+    const espacioToDelete = this.espaciosDisponibles.find(espacio => espacio.id === id);
+
+    if (espacioToDelete) {
+      this.ingresoPService.deleteEspacio(espacioToDelete).subscribe({
+        next: () => {
+          console.log(`Espacio con ID ${id} eliminado correctamente.`);
+
+          this.placasEnParqueadero = this.placasEnParqueadero.filter(p => !p.includes(`Espacio-${id}`));
+
+          this.actualizarEspaciosDisponibles();
+        },
+        error: (err) => console.error('Error al eliminar el espacio', err)
       });
+    } else {
+      console.log('Espacio no encontrado.');
+    }
+  }
+
+  getEspacios() {
+    this.espaciosService.getEspacios().subscribe({
+      next: (data1) => {
+        console.log("Datos de espacios recibidos:", data1);
+        this.espaciosUsados = data1; // Store data in espaciosUsados
+      },
+      error: (err) => console.error("Error al obtener los espacios:", err),
+    });
+    
   }
 }

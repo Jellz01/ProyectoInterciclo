@@ -1,12 +1,30 @@
-<div *ngIf="contratos.length === 0">No contracts available</div>
-<ul *ngIf="contratos.length > 0">
-  <li *ngFor="let contrato of contratos">
-    <strong>{{ contrato.nombreCliente }}</strong>
-    <p>Fecha de inicio: {{ contrato.fechaInicio | date: 'shortDate' }}</p>
-    <p>Fecha final: {{ contrato.fechaFinal | date: 'shortDate' }}</p>
-    <p>Placa: {{ contrato.placa }}</p>
-    
-    <!-- Botón de borrar, pasando el id del contrato -->
-    <button class="delete" (click)="borrarContrato(contrato.id)">Borrar</button>
-  </li>
-</ul>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente ID</th>
+      <th>Espacio</th>
+      <th>Fecha Inicio</th>
+      <th>Fecha Fin</th>
+      <th>Placa</th>
+      <th>Total</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let contrato of contratos">
+      <td>{{ contrato.id }}</td>
+      <td>{{ contrato.clienteId }}</td>
+      <td>{{ contrato.espacio }}</td>
+      <td>{{ contrato.fechaInicio }}</td>
+      <td>{{ contrato.fechaFinal }}</td>
+      <td>{{ contrato.placa }}</td>
+      <td>{{ contrato.total }}</td>
+      <td>
+        <button class="btn-eliminar" (click)="eliminarContrato(contrato.id)">
+          Eliminar
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>

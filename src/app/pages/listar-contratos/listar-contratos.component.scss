@@ -1,111 +1,54 @@
-/* Container for the users list */
-ul {
-    padding: 0;
-    margin: 0;
-    list-style-type: none;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  /* Individual user box styling */
-  li {
-    background-color: #f4f4f4; /* Light background */
-    border-radius: 10px;       /* Rounded corners */
-    padding: 20px;             /* Space inside the box */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
-  }
-  
-  /* Hover effect for user boxes */
-  li:hover {
-    border-color: #6a1b9a;
-    border-width: 3px;
-    transform: translateY(-5px); /* Lift effect */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
-  }
-  
-  /* Accent styling for text */
-  strong {
-    color: #6a1b9a; /* Purple color */
-    font-size: 1.2em; /* Slightly larger text */
-    margin-bottom: 10px;
-    display: block;
-  }
-  
-  /* Styling for email and phone */
-  p {
-    color: #333; /* Dark text for contrast */
-    font-size: 0.9em;
-    margin: 5px 0;
-  }
-  
-  /* Styling when no users are available */
-  div {
-    font-size: 1.2em;
-    color: #6a1b9a; /* Purple color */
-    text-align: center;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-  }
+/* Estilos generales para la tabla */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
 
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  li {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  strong {
-    font-size: 1.2em;
-    color: #333;
-  }
-  
-  p {
-    margin: 5px 0;
-    font-size: 0.9em;
-    color: #555;
-  }
-  
-  button {
-    padding: 8px 15px;
-    margin-right: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.95em;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  
-  button:hover {
-    transform: scale(1.05);
-  }
-  
-  button.edit {
-    background-color: #4CAF50;
-    color: white;
-  }
-  
-  button.edit:hover {
-    background-color: #45a049;
-  }
-  
-  button.delete {
-    background-color: #f44336;
-    color: white;
-  }
-  
-  button.delete:hover {
-    background-color: #e53935;
-  }
-  
-  
+th, td {
+  text-align: left;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+/* Estilos para las celdas de la tabla */
+th {
+  background-color: #333;
+  color: white;
+}
+
+td {
+  background-color: #fff;
+}
+
+tr:nth-child(even) td {
+  background-color: #f2f2f2;
+}
+
+/* Efecto de hover sobre las filas */
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Espaciado adicional entre las celdas */
+td {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Estilos para el botón de eliminar */
+.btn-eliminar {
+  background-color: #e74c3c; /* Rojo */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn-eliminar:hover {
+  background-color: #c0392b; /* Rojo oscuro en hover */
+}

@@ -23,7 +23,7 @@ export class EditarPerfilElegidoComponent {
       email: ['', [Validators.required, Validators.email]],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       nombre: ['', Validators.required],
-      fecha_nacimiento: ['', Validators.required],
+      fechaNacimiento: ['', Validators.required],
       rol: ['', Validators.required]
     });
     console.log("Entiororjnbhnjbuy")
@@ -31,7 +31,7 @@ export class EditarPerfilElegidoComponent {
 
   async ngOnInit(): Promise<void> {
     // Retrieve the email from local storage
-    const storedEmail = localStorage.getItem('editarEmail');
+    const storedEmail = localStorage.getItem('emailSB');
     if (storedEmail) {
       try {
         // Query Firestore for user data based on email

@@ -1,281 +1,131 @@
 body {
-    font-family: 'Roboto', 'Arial', sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-    color: #333;
-    line-height: 1.6;
+  font-family: 'Roboto', 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  color: #333;
 }
 
 .container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 30px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
-    border-radius: 12px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  border-radius: 12px;
 }
 
 h1, h2 {
-    color: #6a0dad;
-    text-align: center;
-    font-weight: 300;
-    margin-bottom: 25px;
+  color: #6a0dad;
+  text-align: center;
+  font-weight: 300;
+  margin-bottom: 25px;
 }
 
 h1 {
-    font-size: 2.5em;
-    letter-spacing: 1px;
+  font-size: 2.5em;
 }
 
 h2 {
-    font-size: 1.8em;
-}
-
-label {
-    font-weight: 500;
-    display: block;
-    margin: 15px 0 8px;
-    color: #444;
-    text-transform: uppercase;
-    font-size: 0.9em;
-}
-
-input[type="time"],
-input[type="number"],
-input[type="text"],
-button {
-    padding: 12px 15px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    width: 100%;
-    font-size: 16px;
-    transition: all 0.3s ease;
-}
-
-input[type="time"]:focus,
-input[type="number"]:focus,
-input[type="text"]:focus {
-    outline: none;
-    border-color: #6a0dad;
-    box-shadow: 0 0 8px rgba(106, 13, 173, 0.2);
+  font-size: 1.8em;
 }
 
 button {
-    background-color: #6a0dad;
-    color: white;
-    cursor: pointer;
-    border: none;
-    width: auto;
-    margin-top: 15px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    transition: background-color 0.3s ease, transform 0.2s;
+  padding: 12px 20px;
+  margin: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: #6a0dad;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+button i {
+  margin-right: 8px;
 }
 
 button:hover {
-    background-color: #9b30c9;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #9b30c9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.espacio {
-    border: 2px solid #e0e0e0;
-    margin: 8px;
-    padding: 15px;
-    width: 130px;
-    height: 70px;
-    text-align: center;
-    background-color: #28a745; /* Verde para espacio libre */
-    border-radius: 10px;
-    transition: all 0.4s ease;
-    position: relative;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
+.tarifa-info, .info-config {
+  margin-bottom: 25px;
 }
 
-.espacio.ocupado {
-    background-color: #ff4d4d; /* Rojo para espacio ocupado */
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.info-config {
-    background-color: #f9f9f9;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-    margin: 25px 0;
-    text-align: center;
-}
-
-.info-config p {
-    margin: 10px 0;
-    font-size: 18px;
-    color: #555;
+.tarifa-info p, .info-config p {
+  font-size: 18px;
+  color: #555;
 }
 
 .info-config span {
-    color: #6a0dad;
-    font-weight: 600;
+  color: #6a0dad;
+  font-weight: 600;
 }
 
-#parqueadero {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 30px;
+.entrada-vehiculo {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+  justify-content: space-between;
 }
 
+.form-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-/* Estilos generales para el parqueadero */
-#parqueadero {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 10px;
-    justify-content: center;
+.form-group label {
+  font-size: 1em;
+  font-weight: 500;
+}
+
+.form-group input, .form-group select {
+  padding: 10px;
+  font-size: 1em;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  flex: 1;
+}
+
+.espacios-lista table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.espacios-lista th, .espacios-lista td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.espacios-lista th {
+  background-color: #6a0dad;
+  color: white;
+}
+
+.espacios-lista tbody tr:nth-child(even) {
+  background-color: #f4f4f4;
+}
+
+.espacios-lista tbody tr:hover {
+  background-color: #e0e0e0;
+}
+
+@media (max-width: 768px) {
+  .entrada-vehiculo {
+      flex-wrap: wrap;
   }
-  
-  /* Estilo base para cada espacio */
-  .espacio {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s ease;
+
+  .form-group {
+      flex: 1 1 100%;
   }
-  
-  /* Estilo para los espacios libres (verdes) */
-  .espacio:not(.ocupado) {
-    background-color: #4CAF50; /* Verde */
-    color: white;
-  }
-  
-  /* Estilo para los espacios ocupados (rojos) */
-  .espacio.ocupado {
-    background-color: #f44336; /* Rojo */
-    color: white;
-  }
-  
-  /* Efecto de hover sobre los espacios */
-  .espacio:hover {
-    transform: scale(1.05);
-    background-color: #388E3C; /* Cambia a un verde más oscuro */
-  }
-  
-  /* Animación de placa ingresada */
-  .car-animation {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    background-color: #ffffff;
-    border-radius: 50%;
-    animation: moveCar 1s ease-in-out;
-  }
-  
-  /* Animación del movimiento de un coche */
-  @keyframes moveCar {
-    0% {
-      transform: translateY(-10px);
-      opacity: 0;
-    }
-    50% {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    100% {
-      transform: translateY(-10px);
-      opacity: 0;
-    }
-  }
-  
-  /* Estilos generales para el parqueadero */
-#parqueadero {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 10px;
-    justify-content: center;
-  }
-  
-  /* Estilo base para cada espacio */
-  .espacio {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  /* Estilo para los espacios libres (verdes) */
-  .espacio:not(.ocupado) {
-    background-color: #4CAF50; /* Verde */
-    color: white;
-  }
-  
-  /* Estilo para los espacios ocupados (rojos) */
-  .espacio.ocupado {
-    background-color: #f44336; /* Rojo */
-    color: white;
-  }
-  
-  /* Estilo para la placa dentro de un espacio ocupado */
-  .placa {
-    font-size: 14px;
-    font-weight: bold;
-    color: #c91414;
-    text-align: center;
-  }
-  
-  /* Efecto de hover sobre los espacios */
-  .espacio:hover {
-    transform: scale(1.05);
-    background-color: #388E3C; /* Cambia a un verde más oscuro */
-  }
-  
-  /* Animación de placa ingresada */
-  .car-animation {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    background-color: #ffffff;
-    border-radius: 50%;
-    animation: moveCar 1s ease-in-out;
-  }
-  
-  /* Animación del movimiento de un coche */
-  @keyframes moveCar {
-    0% {
-      transform: translateY(-10px);
-      opacity: 0;
-    }
-    50% {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    100% {
-      transform: translateY(-10px);
-      opacity: 0;
-    }
-  }
-  
+}

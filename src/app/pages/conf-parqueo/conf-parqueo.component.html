@@ -1,39 +1,108 @@
-<h2>Configurar Parqueadero y Tarifas</h2>
+<form (ngSubmit)="onSubmit()">
+  <div>
+    <label for="hora_apertura">Hora Apertura:</label>
+    <input 
+      type="time" 
+      id="hora_apertura" 
+      [(ngModel)]="formulario.hora_apertura" 
+      name="hora_apertura" 
+      required
+    >
+  </div>
+  
+  <div>
+    <label for="hora_cierre">Hora Cierre:</label>
+    <input 
+      type="time" 
+      id="hora_cierre" 
+      [(ngModel)]="formulario.hora_cierre" 
+      name="hora_cierre" 
+      required
+    >
+  </div>
+  
+  <div>
+    <label for="cant_espacios">Cantidad de espacios:</label>
+    <input 
+      type="number" 
+      id="cant_espacios" 
+      [(ngModel)]="formulario.cant_espacios" 
+      name="cant_espacios" 
+      required
+    >
+  </div>
 
-<!-- Configuración del parqueadero -->
-<label for="horaApertura">Horario de apertura:</label>
-<input #horaAperturaInput type="time" id="horaApertura" value="08:00">
+  <div>
+    <label for="tarifa_dia">Tarifa por día:</label>
+    <input 
+      type="number" 
+      id="tarifa_dia" 
+      [(ngModel)]="formulario.tarifa_dia" 
+      name="tarifa_dia" 
+      required
+    >
+  </div>
+  
+  <div>
+    <label for="tarifa_hora">Tarifa por hora:</label>
+    <input 
+      type="number" 
+      id="tarifa_hora" 
+      [(ngModel)]="formulario.tarifa_hora" 
+      name="tarifa_hora" 
+      required
+    >
+  </div>
 
-<label for="horaCierre">Horario de cierre:</label>
-<input #horaCierreInput type="time" id="horaCierre" value="20:00">
+  <div>
+    <label for="tarifa_mes">Tarifa por mes:</label>
+    <input 
+      type="number" 
+      id="tarifa_mes" 
+      [(ngModel)]="formulario.tarifa_mes" 
+      name="tarifa_mes" 
+      required
+    >
+  </div>
 
-<label for="numeroParqueos">Número de parqueos:</label>
-<input #numeroParqueosInput type="number" id="numeroParqueos" value="10" min="1" max="100">
+  <!-- Sección para los días disponibles -->
+  <div>
+    <label for="dias_disponibles">Días disponibles:</label>
+    <div>
+      <input type="checkbox" id="lunes" [(ngModel)]="formulario.dias_disponibles.lunes" name="lunes">
+      <label for="lunes">Lunes</label>
+    </div>
+    <div>
+      <input type="checkbox" id="martes" [(ngModel)]="formulario.dias_disponibles.martes" name="martes">
+      <label for="martes">Martes</label>
+    </div>
+    <div>
+      <input type="checkbox" id="miercoles" [(ngModel)]="formulario.dias_disponibles.miercoles" name="miercoles">
+      <label for="miercoles">Miércoles</label>
+    </div>
+    <div>
+      <input type="checkbox" id="jueves" [(ngModel)]="formulario.dias_disponibles.jueves" name="jueves">
+      <label for="jueves">Jueves</label>
+    </div>
+    <div>
+      <input type="checkbox" id="viernes" [(ngModel)]="formulario.dias_disponibles.viernes" name="viernes">
+      <label for="viernes">Viernes</label>
+    </div>
+    <div>
+      <input type="checkbox" id="sabado" [(ngModel)]="formulario.dias_disponibles.sabado" name="sabado">
+      <label for="sabado">Sábado</label>
+    </div>
+    <div>
+      <input type="checkbox" id="domingo" [(ngModel)]="formulario.dias_disponibles.domingo" name="domingo">
+      <label for="domingo">Domingo</label>
+    </div>
+  </div>
 
-<!-- Días de operación -->
-<label>Días de operación:</label>
-<div id="diasOperacion">
-  <label><input type="checkbox" id="lunes" value="Lunes"> Lunes</label>
-  <label><input type="checkbox" id="martes" value="Martes"> Martes</label>
-  <label><input type="checkbox" id="miercoles" value="Miércoles"> Miércoles</label>
-  <label><input type="checkbox" id="jueves" value="Jueves"> Jueves</label>
-  <label><input type="checkbox" id="viernes" value="Viernes"> Viernes</label>
-  <label><input type="checkbox" id="sabado" value="Sábado"> Sábado</label>
-  <label><input type="checkbox" id="domingo" value="Domingo"> Domingo</label>
-</div>
+  <!-- Sección para la selección de fechas específicas -->
+  <div>
+    <label for="fechas_disponibles">Seleccionar fechas disponibles:</label>
+    <input type="date" [(ngModel)]="formulario.fechas_disponibles" name="fechas_disponibles" multiple>
+  </div>
 
-<!-- Definición de tarifas -->
-<label for="tarifaHora">Tarifa por hora:</label>
-<input #tarifaHoraInput type="number" id="tarifaHora" value="0.25" min="0">
-
-<label for="tarifaDia">Tarifa por día:</label>
-<input #tarifaDiaInput type="number" id="tarifaDia" value="1.50" min="0">
-
-<label for="tarifaMes">Tarifa por mes:</label>
-<input #tarifaMesInput type="number" id="tarifaMes" value="35" min="0">
-
-<!-- Botón único -->
-<button (click)="configurarYDefinir()">Guardar Configuración y Tarifas</button>
-
-<!-- Container for parking spaces -->
-<div #parqueadero class="parqueadero"></div>
+  <button type="submit">Actualizar configuraciones</button>
+</form>

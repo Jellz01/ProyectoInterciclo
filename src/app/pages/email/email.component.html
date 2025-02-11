@@ -1,0 +1,23 @@
+<form (ngSubmit)="sendEmail()" class="email-form">
+  <h2>Email Form</h2>
+
+  <div>
+    <label for="recipient">Recipient:</label>
+    <input type="email" id="recipient" [(ngModel)]="recipient" name="recipient" required />
+  </div>
+
+  <div>
+    <label for="subject">Subject:</label>
+    <input type="text" id="subject" [(ngModel)]="subject" name="subject" required />
+  </div>
+
+  <div>
+    <label for="message">Message:</label>
+    <textarea id="message" [(ngModel)]="message" name="message" required></textarea>
+  </div>
+
+  <button type="submit">Send Email</button>
+</form>
+
+<!-- Button to fetch users and send email to all of them -->
+<button class="get-users-btn" (click)="getPersonas()">Get Users and Send Email</button>

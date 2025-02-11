@@ -8,9 +8,11 @@
 </head>
 <body>
     <div class="container">
-        <button (click)="guardarEmail()">
-            <i class="fas fa-cog"></i> Settings
+        <button (click)="configuraciones()">
+            <i class="fas fa-cog"></i> Configuración
         </button>
+        <button (click)="historial()"><i class="fas fa-cog"></i>Historial</button>
+        <button (click)="emailM()">Email</button>
 
         <button (click)="listarUsuarios()">
             <i class="fas fa-users"></i> Listar Usuarios
@@ -18,46 +20,84 @@
         <button (click)="listarContratos()">
             <i class="fas fa-users"></i> Listar Contratos
         </button>
-        <button (click)="gestionarContrato()">Registrar Contrato</button> <!-- Botón añadido -->
-        <button (click)="gestionarParqueadero()">Configuracion Parqueadero</button> <!-- Botón añadido -->
+        <button (click)="editarPerfil()"><i class="fas fa-cog"></i> </button>
+        <button (click)="gestionarContrato()">Registrar Contrato</button>
+        <button (click)="gestionarParqueadero()">Configuración Parqueadero</button>
 
         <h1>Parqueadero</h1>
 
         <div class="tarifa-info">
             <h2>Tarifas Definidas:</h2>
-            <p>Tarifa por hora: <span id="infoTarifaHora"></span></p>
-            <p>Tarifa por día: <span id="infoTarifaDia"></span></p>
-            <p>Tarifa por mes: <span id="infoTarifaMes"></span></p>
+            <p>Tarifa por hora: {{ tarifas.hora }}</p>
+            <p>Tarifa por día: {{ tarifas.dia }}</p>
+            <p>Tarifa por mes: {{ tarifas.mes }}</p>
         </div>
 
         <div class="info-config">
             <h2>Información Configuración:</h2>
-            <p>Horario de apertura: <span id="horarioApertura"></span></p>
-            <p>Horario de cierre: <span id="horarioCierre"></span></p>
-            <p>Número de parqueos: <span id="numeroParqueosInfo"></span></p>
-            <p>Días de apertura: <span id="diasApertura"></span></p> <!-- Nuevo -->
+            <p>Horario de apertura: {{ horaApertura }}</p>
+            <p>Horario de cierre: {{ horaCierre }}</p>
+            <p>Número de parqueos: {{ numeroParqueos }}</p>
+            <p>Días de apertura: <span *ngFor="let dia of diasApertura">{{ dia }} </span></p>
+        </div>
+
+        <!-- Entrada de Vehículo -->
+        <div class="entrada-vehiculo">
+            <div class="form-group">
+                <label for="placaIngreso">Placa Entrada:</label>
+                <input type="text" id="placaIngreso" [(ngModel)]="placaIngreso" placeholder="Ingrese placa">
+            </div>
+
+            <div class="form-group">
+                <label for="fechaHoraIngreso">Fecha y Hora de Ingreso:</label>
+                <input type="datetime-local" id="fechaHoraIngreso" [(ngModel)]="fechaHoraIngreso">
+            </div>
+
+            <div class="form-group">
+                <label for="espacioSelect">Espacio:</label>
+                <select id="espacioSelect" [(ngModel)]="espacioSeleccionado">
+                    <option *ngFor="let espacio of espaciosDisponibles" [value]="espacio.id">
+                        {{ espacio.espacio }}
+                    </option>
+                </select>
+            </div>
+            <!-- The Modal -->
+
+            
+
+            <button (click)="ocuparEspacio()">Entrada</button>
+        </div>
+        <div class="espacios-lista">
+            <h3>Espacios Disponibles</h3>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Espacio</th>
+                        <th>Placa</th>
+                        <th>Hora Ingreso</th>
+                        <th>Hora Salida</th> <!-- Added column for exit time -->
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let espacio of espaciosUsados">
+                        <td>{{ espacio.id }}</td>
+                        <td>{{ espacio.espacio }}</td>
+                        <td>{{ espacio.placa }}</td>
+                        <td>{{espacio.fechaHoraIngreso}}</td>
+                        <td>
+                            <!-- Added input field for exit time -->
+                            <input type="datetime-local" [(ngModel)]="espacio.fechaHoraSalida">
+                        </td>
+                        <td>
+                            <button (click)="salirEspacio(espacio.placa, espacio.fechaHoraSalida || '')">Salir</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         
-
-      
-        <h2>Ingreso de Placa de Vehículo</h2>
-        <input type="text" id="placaIngreso" placeholder="Ingrese la placa (max 7 caracteres)" maxlength="7" />
-        <button (click)="ocuparEspacio()">Ocupar Espacio</button>
-
-        <h2>Salida de Vehículo</h2>
-        <input type="text" id="placaSalida" placeholder="Ingrese la placa para salir" maxlength="7" />
-        <button (click)="salirEspacio()">Salir</button>
-
-      
-        <div>
-            <h3>Placas en el Parqueadero</h3>
-            <ul id="listaPlacasContenido">
-              <li *ngFor="let placa of placasEnParqueadero">
-                {{ placa }}
-              </li>
-            </ul>
-          </div>
-          
 
         <div id="parqueadero"></div>
     </div>

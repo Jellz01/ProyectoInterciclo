@@ -9,6 +9,13 @@ import { UsuarioEmComponent } from './pages/usuario-em/usuario-em.component';
 import { ContratosComponent } from './pages/contratos/contratos.component';
 import { ListarContratosComponent } from './pages/listar-contratos/listar-contratos.component';
 import { ConfParqueoComponent } from './pages/conf-parqueo/conf-parqueo.component';
+import { AuteComponent } from './pages/aute/aute.component';
+import { CrearUsFComponent } from './pages/crear-us-f/crear-us-f.component';
+import { HistorialComponent } from './pages/historial/historial.component';
+import { EmailComponent } from './pages/email/email.component';
+import { EditarPerfilDespuesComponent } from './pages/editar-perfil-despues/editar-perfil-despues.component';
+
+
 
 export const routes: Routes = [
 
@@ -16,7 +23,7 @@ export const routes: Routes = [
 
     {
         path: '',
-        component: InicioComponent
+        component:AuteComponent
     },
 
     {
@@ -58,6 +65,22 @@ export const routes: Routes = [
     {
         path: 'pages/configParqueo',
         component: ConfParqueoComponent
+    },
+    {
+        path: 'pages/crearUF',
+        component: CrearUsFComponent
+    },
+    {
+        path:'pages/historial',
+        component: HistorialComponent
+    },
+    {
+        path:'pages/email',
+        component: EmailComponent
+    },
+    {
+        path:'pages/editarPerfilD',
+        component: EditarPerfilDespuesComponent
     }
 
 ];

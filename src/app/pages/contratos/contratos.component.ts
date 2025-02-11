@@ -1,146 +1,163 @@
-import { Component } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms'; // Add ReactiveFormsModule
-import { Router } from '@angular/router';
-import { collection, getDocs, setDoc, doc, query, where } from 'firebase/firestore';
-import { firestore } from '../../firebase.config';
-import { AuthService } from '../../firestore.config'; 
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, NgFor } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+
+import { PersonasService, Persona } from '../../services/personas.service';
+import { ContratosService, Contrato } from '../../services/contratos.service';
+import { FormularioService, Usuario } from '../../services/formulario.service';
+import { ConfiguracionParqueaderoService } from '../../services/configuracion-parqueadero.service';
 
 @Component({
   selector: 'app-contratos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule], // Include ReactiveFormsModule
+  imports: [CommonModule, HttpClientModule, NgFor, FormsModule],
   templateUrl: './contratos.component.html',
   styleUrls: ['./contratos.component.scss']
 })
-export class ContratosComponent {
-  userForm: any;
-  clientes: any[] = [];
-  selectedCliente: string | null = null;
-  errorMessage: string | null = null;
-  numeroP = localStorage.getItem('np');
+export class ContratosComponent implements OnInit {
+  contratos: Contrato[] = [];
+  cantidadEspacios: number = 0;
+  espaciosArray: number[] = [];
+  usuario: Usuario[] = [];  // Store personas for dropdown
+  newContrato: Contrato = {
+    clienteId: '',
+    espacio: '',
+    placa: '',
+    fechaInicio: '',
+    fechaFinal: '',
+    total: ''
+  };
 
-  // Add form for contract
-  contratoForm: any;
+  tarifaHora: number = 5;
+  tarifaDia: number = 3;
+  tarifaMes: number = 2;
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router
-  ) {
-    const userData = {
-      fechIni: { seconds: 1680326400 }, 
-      fechFin: { seconds: 1682918400 },
-    };
-
-    this.contratoForm = this.fb.group({
-      clienteId: ['', Validators.required],
-      placaContrato: ['', Validators.required],
-      inicioContrato: [
-        new Date(userData['fechIni'].seconds * 1000).toISOString().substring(0, 10) || '',
-        Validators.required
-      ],
-      finContrato: [
-        new Date(userData['fechFin'].seconds * 1000).toISOString().substring(0, 10) || '',
-        Validators.required
-      ],
-      estado: ['activo'],
-      espacioContrato: ['', Validators.required] // Agregar campo para 'espacioContrato' aquí
-    });
-  }
+    private contratosService: ContratosService,
+    private formularioService: FormularioService,
+    private configuraciones: ConfiguracionParqueaderoService
+  ) { }
 
   ngOnInit(): void {
-    this.getAllClientes();
+    this.loadContratos();
+    this.loadPersonas(); 
+    this.cantEspacios(); 
+    this.loadConfiguraciones(); // Load configuration details
   }
 
-  getAllClientes(): Promise<any[]> {
-    const clientesCollectionRef = collection(firestore, 'users');
-    return getDocs(clientesCollectionRef).then((querySnapshot) => {
-      let clientesList: any[] = [];
-      querySnapshot.forEach((doc) => {
-        const userData = doc.data();
-        if (userData['role'] === 'empleado') {
-          clientesList.push({ id: doc.id, ...userData });
-        }
-      });
-      this.clientes = clientesList;
-      console.log("Retrieved users (empleados):", this.clientes);
-      return clientesList;
-    }).catch((error) => {
-      console.error("Error fetching users (clientes):", error);
-      return [];
+  loadConfiguraciones() {
+    this.configuraciones.getConfiguraciones().subscribe(data => {
+      const configuraciones = data.configuraciones[0];
+  
+      this.tarifaHora = configuraciones.tarifa_hora;
+      
+      this.tarifaDia = configuraciones.tarifa_dia;
+      this.tarifaMes = configuraciones.tarifa_mes;
+      console.log("Dia: ",this.tarifaDia);
+      console.log("Hora: ",this.tarifaHora);
+      console.log("Monthly: ",this.tarifaMes);
     });
   }
 
-  async registrarContrato() {
-    console.log("Iniciando registro de contrato");
-
-    const clienteId = this.contratoForm.value.clienteId;
-    const placaContrato = this.contratoForm.value.placaContrato;
-    const espacioContrato = this.contratoForm.value.espacioContrato; // Obtener valor de espacioContrato
-
-    console.log("Cliente ID:", clienteId);
-    console.log("Placa Contrato:", placaContrato);
-    console.log("Espacio Contrato:", espacioContrato); // Mostrar el valor de espacioContrato en consola
-
-    const inicioContrato = this.convertToDate(this.contratoForm.value.inicioContrato);
-    const finContrato = this.convertToDate(this.contratoForm.value.finContrato);
-
-    if (!inicioContrato || !finContrato) {
-      console.error("Valores de fecha inválidos");
-      return;
+  calculateTime(fechaInicio: string, fechaFin: string): number {
+    // Convert fechaInicio and fechaFin to Date objects
+    const fechaInicioDate = new Date(fechaInicio);
+    const fechaFinDate = new Date(fechaFin);
+  
+    // Calculate the difference in milliseconds
+    const diffInMillis = fechaFinDate.getTime() - fechaInicioDate.getTime();
+    const diffInHours = diffInMillis / (1000 * 3600); // Convert milliseconds to hours
+    const diffInDays = diffInHours / 24; // Convert hours to days
+  
+    // Log the calculation steps
+    console.log("Fecha Inicio: ", fechaInicioDate);
+    console.log("Fecha Final: ", fechaFinDate);
+    console.log("Diferencia en milisegundos: ", diffInMillis);
+    console.log("Diferencia en horas: ", diffInHours);
+    console.log("Diferencia en días: ", diffInDays);
+  
+    // Calculate the total tariff based on the time difference
+    let tarifa: number = 0;
+    if (diffInHours < 24) {
+      tarifa = this.tarifaHora * diffInHours; // For less than 24 hours, multiply by the hours
+    } else if (diffInHours >= 24 && diffInHours < 730) {
+      tarifa = this.tarifaDia * diffInDays; // For between 1 and 30 days (24h - 730h), multiply by the days
+    } else if (diffInHours >= 730) {
+      tarifa = this.tarifaMes * Math.ceil(diffInDays / 30); // For more than 30 days (730h), multiply by the months (rounded up)
     }
+  
+    // Log the final calculated tarifa
+    console.log("Tarifa Calculada: ", tarifa);
+  
+    return tarifa;
+  }
+  
+  
 
-    const estado = this.contratoForm.value.estado;
+  cantEspacios() {
+    this.configuraciones.getCantEspacios()
+      .subscribe(
+        (data1) => {
+          this.cantidadEspacios = Number(data1);
+          this.generarEspacios(); // Llamar a la función para actualizar el array
+        },
+        (error) => {
+          console.error('Error Cargando cantidadEspacios: ', error);
+        }
+      );
+  }
 
-    // Obtener el valor de numeroP desde localStorage
-    const numeroP = parseInt(localStorage.getItem('np') || '0', 10);
+  generarEspacios() {
+    this.espaciosArray = Array.from({ length: this.cantidadEspacios }, (_, i) => i + 1);
+  }
 
-    // Verificar si espacioContrato es mayor que numeroP
-    if (espacioContrato > numeroP) {
-      this.errorMessage = "El espacio contratado no puede ser mayor que el número disponible.";
-      console.error(this.errorMessage);
-      return; // Exit if espacioContrato is greater than numeroP
-    }
-
-    try {
-      const contratosCollectionRef = collection(firestore, 'contratos');
-
-      // Verificar si ya existe un contrato con la misma placa
-      const q = query(contratosCollectionRef, where("placaContrato", "==", placaContrato));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        this.errorMessage = "Ya existe un contrato con esa placa."; // Set error message
-        console.error(this.errorMessage);
-        return; // Exit if the contract with the same plate already exists
-      }
-
-      // Registrar el nuevo contrato
-      const newContractRef = doc(contratosCollectionRef, placaContrato); // Usar placa como ID del documento
-      await setDoc(newContractRef, {
-        clienteId,
-        placaContrato,
-        inicioContrato,
-        finContrato,
-        estado,
-        espacioContrato  // Incluir el nuevo campo
+  loadPersonas(): void {
+    this.formularioService.getTodosLosUsuarios()
+      .subscribe({
+        next: (personas) => {
+          this.usuario = personas;
+        },
+        error: (error) => {
+          console.error('Error cargando usuarios:', error);
+        }
       });
+  }
 
-      console.log("Contrato registrado correctamente con ID:", newContractRef.id);
-      this.router.navigate(['pages/Main']);
-    } catch (error) {
-      console.error("Error registrando contrato:", error);
-      this.errorMessage = "Error al registrar el contrato. Por favor, inténtelo nuevamente."; // Set a general error message
-    }
-}
+  loadContratos(): void {
+    this.contratosService.getContratos().subscribe(
+      (data) => {
+        this.contratos = data;
+      },
+      (error) => {
+        console.error('Error fetching contratos', error);
+      }
+    );
+  }
 
+  addContrato(): void {
+    // Calculate the total before adding the contract
+    this.newContrato.total = this.calculateTime(this.newContrato.fechaInicio, this.newContrato.fechaFinal).toString();
 
-  convertToDate(dateValue: string): Date | null {
-    const date = new Date(dateValue);
-    if (isNaN(date.getTime())) {
-      return null; 
-    }
-    return date;
+    this.contratosService.createContrato(this.newContrato).subscribe(
+      (response) => {
+        this.contratos.push(response);
+        this.resetForm();
+      },
+      (error) => {
+        console.error('Error adding contrato', error);
+      }
+    );
+  }
+
+  resetForm(): void {
+    this.newContrato = {
+      clienteId: '',
+      espacio: '',
+      placa: '',
+      fechaInicio: '',
+      fechaFinal: '',
+      total: ''
+    };
   }
 }

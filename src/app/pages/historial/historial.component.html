@@ -1,0 +1,50 @@
+<button (click)="getHistorial()" class="btn-cargar">Cargar Historial</button>
+
+<div class="filter-container">
+  <!-- Filtro por mes -->
+  <select [(ngModel)]="selectedMonth" (change)="filterHistorial()">
+    <option value="">Filtrar por mes</option>
+    <option *ngFor="let month of months" [value]="month">{{ month }}</option>
+  </select>
+
+  <!-- Filtro por día -->
+  <select [(ngModel)]="selectedDay" (change)="filterHistorial()">
+    <option value="">Filtrar por día</option>
+    <option *ngFor="let day of days" [value]="day">{{ day }}</option>
+  </select>
+
+  <!-- Filtro por semana -->
+  <select [(ngModel)]="selectedWeek" (change)="filterHistorial()">
+    <option value="">Filtrar por semana</option>
+    <option *ngFor="let week of weeks" [value]="week">{{ week }}</option>
+  </select>
+
+  <!-- Filtro por año -->
+  <select [(ngModel)]="selectedYear" (change)="filterHistorial()">
+    <option value="">Filtrar por año</option>
+    <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+  </select>
+</div>
+
+<div class="historial-container">
+  <table *ngIf="filteredHistorial.length" class="historial-table">
+    <thead>
+      <tr>
+        <th>Espacio</th>
+        <th>Placa</th>
+        <th>Fecha y Hora de Ingreso</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of filteredHistorial">
+        <td>{{ item.espacio }}</td>
+        <td>{{ item.placa }}</td>
+        <td>{{ item.fechaHoraIngreso }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!filteredHistorial.length" class="no-data-message">
+    No hay historial disponible.
+  </div>
+</div>
